@@ -17,7 +17,6 @@ while True:
     print("Erreur: La position de la voiture 1 en y doit être entre -20m et 20m")
   
 
-
 #Voiture2
 vitesse_initiale2 = int(input("Entrer la vitesse (m/s) intiale du deuxième véhicule:"))
 masse_voiture2 = int(input("Entrer la masse (kg) du deuxième vehicule:"))
