@@ -1,8 +1,9 @@
 
+
+import pandas as pd
 # Voiture1
 vitesse_initiale1 = int(input("Entrer la vitesse (m/s) initiale du premier véhicule:"))
 masse_voiture1 = int(input("Entrer la masse (kg) du premier vehicule:"))
-acceleration_vehicule1 = int(input("Entrer l'acceleration du vehicule 1:"))
 vitesse_finale = int(input("Entrer la vitesse finale souhaité du vehicule 1:"))
 
 while True:  # le loop fait en sorte que si l'utilisateur met une valeur hors de -20 et 20, ca affiche un message d'erreur tant qu'il met une valeur valide
@@ -39,7 +40,6 @@ while True:
 # Voiture2
 vitesse_initiale2 = int(input("Entrer la vitesse (m/s) intiale du deuxième véhicule:"))
 masse_voiture2 = int(input("Entrer la masse (kg) du deuxième vehicule:"))
-acceleration_vehicule2 = int(input("Entrer l'acceleration du vehicule 2:"))
 vitesse_finale = int(input("Entrer la vitesse finale souhaité du vehicule 2:"))
 
 while True:
@@ -68,3 +68,14 @@ while True:
         break
     else:
         print("Erreur: La position finale de la voiture 2 en y doit être entre -20m et 20m")
+        
+#Creation du tableau comparatif
+donnes_dict = {
+    'Vitesse initiale (m)': vitesse_initiale1, 
+    'Vitesse finale (m)': 
+    'Masse (kg)': []
+}
+df_donnes_collision_voitures = pd.DataFrame(donnes_dict, index=['Vehicule 1','Vehicule 2'])
+print(df_donnes_collision_voitures)
+
+
