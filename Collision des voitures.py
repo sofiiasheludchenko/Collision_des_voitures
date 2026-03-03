@@ -13,7 +13,7 @@ while True:
 
 # ------------------------------vitesses 1------------------------------
 vitesse_initiale1 = float(input("Entrer la vitesse initiale (m/s) du premier véhicule:"))
-#vitesse_finale = float(input("Entrer la vitesse finale (m/s) souhaité du vehicule 1:"))
+position_finale1 = float(input("Entrer la position finale (m) souhaité du vehicule 1:"))
 
 # ------------------------------positions 1 en x------------------------------
 while True:  # le loop fait en sorte que si l'utilisateur met une valeur hors de -20 et 20, ca affiche un message d'erreur tant qu'il met une valeur valide
@@ -57,7 +57,7 @@ while True:
 
 # ------------------------------vitesses 2------------------------------
 vitesse_initiale2 = float(input("Entrer la vitesse intiale (m/s) du deuxième véhicule:"))
-#vitesse_finale = float(input("Entrer la vitesse finale (m/s) souhaité du vehicule 2:"))
+position_finale2 = float(input("Entrer la position finale (m) souhaité du vehicule 2:"))
 
 # ------------------------------positions 2 en x------------------------------
 while True:
