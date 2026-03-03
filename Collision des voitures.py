@@ -14,11 +14,11 @@ while True:  # le loop fait en sorte que si l'utilisateur met une valeur hors de
         print("Erreur: La position finale de la voiture 1 en x doit être entre -20m et 20m")
 
 while True:
-    position_y_1 = int(input("Indiquer la position de la voiture 1 en y entre -20m et 20m:"))
-    if -20 <= position_y_1 <= 20:
+    positionfinale_y_1 = int(input("Indiquer la position finale de la voiture 1 en y entre -20m et 20m:"))
+    if -20 <= positionfinale_y_1 <= 20:
         break
     else:
-        print("Erreur: La position de la voiture 1 en y doit être entre -20m et 20m")
+        print("Erreur: La position finale de la voiture 1 en y doit être entre -20m et 20m")
 
 
 while True:  # le loop fait en sorte que si l'utilisateur met une valeur hors de -20 et 20, ca affiche un message d'erreur tant qu'il met une valeur valide
@@ -55,4 +55,16 @@ while True:
         break
     else:
         print("Erreur: La position de la voiture 2 en y doit être entre -20m et 20m")
+while True:
+    positionfinale_x_2 = int(input("Indiquer la position finale de la voiture 2 en x entre -20m et 20m:"))
+    if -20 <= positionfinale_x_2 <= 20:
+        break
+    else:
+        print("Erreur: La position finale de la voiture 2 en x doit être entre -20m et 20m")
 
+while True:
+    positionfinale_y_2 = int(input("Indiquer la position finale de la voiture 2 en y entre -20m et 20m du deuxième vehicule:"))
+    if -20 <= positionfinale_y_2 <= 20:
+        break
+    else:
+        print("Erreur: La position finale de la voiture 2 en y doit être entre -20m et 20m")
