@@ -94,9 +94,11 @@ while True:
 
 donnes_dict = {
     'Vitesse initiale (m)': [vitesse_initiale1, vitesse_initiale2],
-    'Position vers la quelle la voiture se dirigeait (m)': [vitesse_finale1, vitesse_finale2],
+    'Position vers la quelle la voiture se dirigeait (m)': [position_finale1, position_finale2],
+    'Position finale des vehicules apres la collision(m)'
     'Vitesse finale des vehicules apres la collision (m)': [0,0], #parfaitement inelastique (pour le sprint 1)
     'Masse (kg)': [masse_voiture1, masse_voiture2],
 }
 df_donnes_collision_voitures = pd.DataFrame(donnes_dict, index=['Vehicule 1', 'Vehicule 2'])
 print(df_donnes_collision_voitures)
+
