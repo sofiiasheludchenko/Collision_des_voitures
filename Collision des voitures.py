@@ -1,4 +1,3 @@
-
 import pandas as pd
 import tkinter as tk
 import numpy as np
@@ -7,88 +6,127 @@ import numpy as np
 
 # ------------------------------masse 1------------------------------
 while True:
-    masse_voiture1 = float(input("Entrer la masse (kg) du premier vehicule:"))
-    if masse_voiture1 == 0:
-        print("ERREUR: La masse (kg) du véhicule 1 ne peut pas être 0 kg!")
-    else:
-        break
+    try:
+        masse_voiture1 = float(input("Entrer la masse (kg) du premier vehicule:"))
+        if masse_voiture1 == 0:
+            print("ERREUR: La masse (kg) du véhicule 1 ne peut pas être 0 kg!")
+        else:
+            break
+    except ValueError:
+        print("ERREUR: Veuillez entrer un nombre valide!")
 
 # ------------------------------vitesses 1------------------------------
-vitesse_initiale1 = float(input("Entrer la vitesse initiale (m/s) du premier véhicule:"))
+while True:
+    try:
+        vitesse_initiale1 = float(input("Entrer la vitesse initiale (m/s) du premier véhicule:"))
+        break
+    except ValueError:
+        print("ERREUR: Veuillez entrer un nombre valide!")
+
 
 # ------------------------------positions 1 en x------------------------------
-while True:  # le loop fait en sorte que si l'utilisateur met une valeur hors de -20 et 20, ca affiche un message d'erreur tant qu'il met une valeur valide
-    position_x_1 = float(input("Indiquer la position initiale (m) de la voiture 1 en x entre -20m et 20m:"))  # Attention lorsque la position ne rentre pas dans les restrictions: Afficher erreur.
-    if -20 <= position_x_1 <= 20:
-        break
-    else:
-        print("ERREUR: La position initiale (m) de la voiture 1 en x doit être entre -20m et 20m")
+while True:
+    try:
+        position_x_1 = float(input("Indiquer la position initiale (m) de la voiture 1 en x entre -20m et 20m:"))
+        if -20 <= position_x_1 <= 20:
+            break
+        else:
+            print("ERREUR: La position initiale (m) de la voiture 1 en x doit être entre -20m et 20m")
+    except ValueError:
+        print("ERREUR: Veuillez entrer un nombre valide!")
 
-while True:  # le loop fait en sorte que si l'utilisateur met une valeur hors de -20 et 20, ca affiche un message d'erreur tant qu'il met une valeur valide
-    positionfinale_x_1 = float(input("Indiquer la position finale (m) de la voiture 1 en x entre -20m et 20m:"))  # Attention lorsque la position ne rentre pas dans les restrictions: Afficher erreur.
-    if -20 <= positionfinale_x_1 <= 20:
-        break
-    else:
-        print("ERREUR: La position finale (m) de la voiture 1 en x doit être entre -20m et 20m")
+while True:
+    try:
+        positionfinale_x_1 = float(input("Indiquer la position finale (m) de la voiture 1 en x entre -20m et 20m:"))
+        if -20 <= positionfinale_x_1 <= 20:
+            break
+        else:
+            print("ERREUR: La position finale (m) de la voiture 1 en x doit être entre -20m et 20m")
+    except ValueError:
+        print("ERREUR: Veuillez entrer un nombre valide!")
 
     # ------------------------------positions 1 en y------------------------------
 while True:
-    position_y_1 = float(input("Indiquer la position initiale (m) de la voiture 1 en y entre -20m et 20m:"))
-    if -20 <= position_y_1 <= 20:
-        break
-    else:
-        print("ERREUR: La position initiale (m) de la voiture 1 en y doit être entre -20m et 20m")
+    try:
+        position_y_1 = float(input("Indiquer la position initiale (m) de la voiture 1 en y entre -20m et 20m:"))
+        if -20 <= position_y_1 <= 20:
+            break
+        else:
+            print("ERREUR: La position initiale (m) de la voiture 1 en y doit être entre -20m et 20m")
+    except ValueError:
+        print("ERREUR: Veuillez entrer un nombre valide!")
 
 while True:
-    positionfinale_y_1 = float(input("Indiquer la position finale (m) de la voiture 1 en y entre -20m et 20m:"))
-    if -20 <= positionfinale_y_1 <= 20:
-        break
-    else:
-        print("ERREUR: La position finale (m) de la voiture 1 en y doit être entre -20m et 20m")
+    try:
+        positionfinale_y_1 = float(input("Indiquer la position finale (m) de la voiture 1 en y entre -20m et 20m:"))
+        if -20 <= positionfinale_y_1 <= 20:
+            break
+        else:
+            print("ERREUR: La position finale (m) de la voiture 1 en y doit être entre -20m et 20m")
+    except ValueError:
+        print("ERREUR: Veuillez entrer un nombre valide!")
 
 # ==============================Voiture2==============================
 
 # ------------------------------masse 2------------------------------
 while True:
-    masse_voiture2 = float(input("Entrer la masse (kg) du deuxième vehicule:"))
-    if masse_voiture2 == 0:
-        print("ERREUR: La masse (kg) du véhicule 2 ne peut pas être 0 kg!")
-    else:
-        break
+    try:
+        masse_voiture2 = float(input("Entrer la masse (kg) du deuxième vehicule:"))
+        if masse_voiture2 == 0:
+            print("ERREUR: La masse (kg) du véhicule 2 ne peut pas être 0 kg!")
+        else:
+            break
+    except ValueError:
+        print("ERREUR: Veuillez entrer un nombre valide!")
 
 # ------------------------------vitesses 2------------------------------
-vitesse_initiale2 = float(input("Entrer la vitesse intiale (m/s) du deuxième véhicule:"))
-
+while True:
+    try:
+        vitesse_initiale2 = float(input("Entrer la vitesse initiale (m/s) du deuxième véhicule:"))
+        break
+    except ValueError:
+        print("ERREUR: Veuillez entrer un nombre valide!")
 # ------------------------------positions 2 en x------------------------------
 while True:
-    position_x_2 = float(input("Indiquer la position initiale (m) de la voiture 2 en x entre -20m et 20m:"))
-    if -20 <= position_x_2 <= 20:
-        break
-    else:
-        print("ERREUR: La position initiale (m) de la voiture 2 en x doit être entre -20m et 20m")
+    try:
+        position_x_2 = float(input("Indiquer la position initiale (m) de la voiture 2 en x entre -20m et 20m:"))
+        if -20 <= position_x_2 <= 20:
+            break
+        else:
+            print("ERREUR: La position initiale (m) de la voiture 2 en x doit être entre -20m et 20m")
+    except ValueError:
+        print("ERREUR: Veuillez entrer un nombre valide!")
 
 while True:
-    positionfinale_x_2 = float(input("Indiquer la position finale (m) de la voiture 2 en x entre -20m et 20m:"))
-    if -20 <= positionfinale_x_2 <= 20:
-        break
-    else:
-        print("ERREUR: La position finale (m) de la voiture 2 en x doit être entre -20m et 20m")
+    try:
+        positionfinale_x_2 = float(input("Indiquer la position finale (m) de la voiture 2 en x entre -20m et 20m:"))
+        if -20 <= positionfinale_x_2 <= 20:
+            break
+        else:
+            print("ERREUR: La position finale (m) de la voiture 2 en x doit être entre -20m et 20m")
+    except ValueError:
+        print("ERREUR: Veuillez entrer un nombre valide!")
 
 # ------------------------------positions 2 en y------------------------------
 while True:
-    position_y_2 = float(input("Indiquer la position initiale (m) de la voiture 2 en y entre -20m et 20m:"))
-    if -20 <= position_y_2 <= 20:
-        break
-    else:
-        print("ERREUR: La position initiale (m) de la voiture 2 en y doit être entre -20m et 20m")
+    try:
+        position_y_2 = float(input("Indiquer la position initiale (m) de la voiture 2 en y entre -20m et 20m:"))
+        if -20 <= position_y_2 <= 20:
+            break
+        else:
+            print("ERREUR: La position initiale (m) de la voiture 2 en y doit être entre -20m et 20m")
+    except ValueError:
+        print("ERREUR: Veuillez entrer un nombre valide!")
 
 while True:
-    positionfinale_y_2 = float(
-        input("Indiquer la position finale (m) de la voiture 2 en y entre -20m et 20m:"))
-    if -20 <= positionfinale_y_2 <= 20:
-        break
-    else:
-        print("ERREUR: La position finale (m) de la voiture 2 en y doit être entre -20m et 20m")
+    try:
+        positionfinale_y_2 = float(input("Indiquer la position finale (m) de la voiture 2 en y entre -20m et 20m:"))
+        if -20 <= positionfinale_y_2 <= 20:
+            break
+        else:
+            print("ERREUR: La position finale (m) de la voiture 2 en y doit être entre -20m et 20m")
+    except ValueError:
+        print("ERREUR: Veuillez entrer un nombre valide!")
 
 
 # vérification de collisions
@@ -129,4 +167,3 @@ donnes_dict = {
 }
 df_donnes_collision_voitures = pd.DataFrame(donnes_dict, index=['Vehicule 1', 'Vehicule 2'])
 print(df_donnes_collision_voitures.round(2).to_string())
-
