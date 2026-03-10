@@ -158,11 +158,11 @@ if not collision_detectee:
 #------------------------------creation du tableau comparatif------------------------------
 
 donnes_dict = {
-    'Vitesse initiale (m)': [vitesse_initiale1, vitesse_initiale2],
-    'Trajectoire (m)': [positionfinale_x_1, positionfinale_x_2],
+    'Vitesse initiale (m/s)': [vitesse_initiale1, vitesse_initiale2],
+    'Position finale (m)': [positionfinale_x_1, positionfinale_x_2],
     "Position initiale (m)": [position_x_1, position_x_2],
-    'Position finale (m)' : [x_traj_1[i],y_traj_1[i]],
-    'Vitesse finale des vehicules apres la collision (m)': [0,0], #parfaitement inelastique (pour le sprint 1)
+    'Trajectoire (m)' : [x_traj_1[i],y_traj_1[i]],
+    'Vitesse finale des vehicules apres la collision (m/s)': [0,0], #parfaitement inelastique (pour le sprint 1)
     'Masse (kg)': [masse_voiture1, masse_voiture2],
 }
 df_donnes_collision_voitures = pd.DataFrame(donnes_dict, index=['Vehicule 1', 'Vehicule 2'])
