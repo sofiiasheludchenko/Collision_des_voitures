@@ -1,0 +1,401 @@
+import tkinter as tk
+from tkinter import messagebox
+import numpy as np
+import math
+
+# ─── Couleurs ───────────────────────────────
+BG      = "#0a0c12"
+PANEL   = "#0f1320"
+BORDER  = "#1e2840"
+V1C     = "#00e5ff"
+V2C     = "#ff4b6e"
+ACCENT  = "#f0c040"
+TEXT    = "#c8d6f0"
+MUTED   = "#4a5a7a"
+GREEN   = "#39ff8a"
+RED     = "#ff3355"
+
+
+class CollisionApp(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.title("Simulateur de Collision 2D")
+        self.configure(bg=BG)
+        self.minsize(960, 680)
+        self._anim_id   = None
+        self._anim_step = 0
+        self._data      = None
+        self._build_ui()
+
+    # ────────────────────────────────────────
+    #  UI
+    # ────────────────────────────────────────
+    def _build_ui(self):
+        # ── En-tête
+        tk.Label(self, text="SIMULATEUR DE COLLISION 2D",
+                 font=("Courier", 18, "bold"), fg="white", bg=BG
+                 ).pack(pady=(14, 2))
+        tk.Label(self, text="collision parfaitement inélastique",
+                 font=("Courier", 8), fg=MUTED, bg=BG
+                 ).pack(pady=(0, 10))
+
+        # ── Zone saisie (2 colonnes)
+        top = tk.Frame(self, bg=BG)
+        top.pack(fill="x", padx=18)
+        top.columnconfigure(0, weight=1)
+        top.columnconfigure(1, weight=1)
+
+        self.f1 = self._vehicle_panel(top, "VÉHICULE 1", V1C, col=0)
+        self.f2 = self._vehicle_panel(top, "VÉHICULE 2", V2C, col=1)
+
+        # ── Bouton
+        btn = tk.Button(self, text="⚡  LANCER LA SIMULATION",
+                        font=("Courier", 11, "bold"),
+                        bg="#111827", fg=ACCENT, activebackground="#1e2840",
+                        activeforeground="white", bd=0, relief="flat",
+                        cursor="hand2", pady=10,
+                        command=self.run_simulation)
+        btn.pack(fill="x", padx=18, pady=10)
+
+        # ── Zone basse : canvas + résultats
+        bot = tk.Frame(self, bg=BG)
+        bot.pack(fill="both", expand=True, padx=18, pady=(0, 14))
+        bot.columnconfigure(0, weight=3)
+        bot.columnconfigure(1, weight=2)
+        bot.rowconfigure(0, weight=1)
+
+        # Canvas
+        cf = tk.Frame(bot, bg=BORDER, padx=1, pady=1)
+        cf.grid(row=0, column=0, sticky="nsew", padx=(0, 8))
+        tk.Label(cf, text="TRAJECTOIRES", font=("Courier", 7),
+                 fg=MUTED, bg=PANEL).pack(anchor="w", padx=6, pady=4)
+        self.canvas = tk.Canvas(cf, bg="#060810", bd=0, highlightthickness=0)
+        self.canvas.pack(fill="both", expand=True, padx=2, pady=(0, 2))
+        self.canvas.bind("<Configure>", lambda e: self._draw_idle())
+
+        # Résultats
+        self.res_outer = tk.Frame(bot, bg=BORDER, padx=1, pady=1)
+        self.res_outer.grid(row=0, column=1, sticky="nsew")
+        self.res_inner = tk.Frame(self.res_outer, bg=PANEL, padx=10, pady=8)
+        self.res_inner.pack(fill="both", expand=True)
+        tk.Label(self.res_inner, text="RÉSULTATS", font=("Courier", 7),
+                 fg=MUTED, bg=PANEL).pack(anchor="w", pady=(0, 6))
+        tk.Label(self.res_inner, text="Aucune simulation\nlancée.",
+                 font=("Courier", 9), fg=MUTED, bg=PANEL,
+                 justify="center").pack(expand=True)
+
+    # ────────────────────────────────────────
+    #  Panneau véhicule
+    # ────────────────────────────────────────
+    def _vehicle_panel(self, parent, title, color, col):
+        """Retourne un dict {key: StringVar}."""
+        outer = tk.Frame(parent, bg=BORDER, padx=1, pady=1)
+        outer.grid(row=0, column=col, sticky="ew",
+                   padx=(0, 8) if col == 0 else 0, pady=(0, 0))
+        outer.columnconfigure(0, weight=1)
+
+        inner = tk.Frame(outer, bg=PANEL, padx=14, pady=10)
+        inner.pack(fill="both", expand=True)
+
+        # barre colorée
+        tk.Frame(inner, bg=color, height=2).pack(fill="x", pady=(0, 8))
+
+        # titre
+        row = tk.Frame(inner, bg=PANEL)
+        row.pack(fill="x", pady=(0, 8))
+        c = tk.Canvas(row, width=10, height=10, bg=PANEL, bd=0,
+                      highlightthickness=0)
+        c.create_oval(1, 1, 9, 9, fill=color, outline="")
+        c.pack(side="left", padx=(0, 6))
+        tk.Label(row, text=title, font=("Courier", 9, "bold"),
+                 fg=color, bg=PANEL).pack(side="left")
+
+        # Valeurs par défaut différentes pour V1 et V2
+        if "1" in title:
+            defaults = {
+                "masse": "1200", "vi": "20",
+                "xi": "-15", "xf": "0",
+                "yi": "0",   "yf": "0",
+            }
+        else:
+            defaults = {
+                "masse": "900",  "vi": "-15",
+                "xi": "15",  "xf": "0",
+                "yi": "0",   "yf": "0",
+            }
+
+        specs = [
+            ("masse",  "Masse (kg)"),
+            ("vi",     "Vitesse initiale (m/s)"),
+            ("xi",     "Position initiale X (m)"),
+            ("xf",     "Position finale X (m)"),
+            ("yi",     "Position initiale Y (m)"),
+            ("yf",     "Position finale Y (m)"),
+        ]
+
+        grid = tk.Frame(inner, bg=PANEL)
+        grid.pack(fill="x")
+        grid.columnconfigure(0, weight=1)
+        grid.columnconfigure(1, weight=1)
+
+        vars_ = {}
+        for i, (key, lbl) in enumerate(specs):
+            r, c2 = divmod(i, 2)
+            cell = tk.Frame(grid, bg=PANEL)
+            cell.grid(row=r, column=c2, sticky="ew", padx=4, pady=3)
+
+            tk.Label(cell, text=lbl, font=("Courier", 7),
+                     fg=MUTED, bg=PANEL).pack(anchor="w")
+
+            sv = tk.StringVar(value=defaults[key])
+            entry = tk.Entry(cell, textvariable=sv,
+                             font=("Courier", 10),
+                             bg="#141a28", fg=TEXT,
+                             insertbackground=color,
+                             relief="flat", bd=0,
+                             highlightthickness=1,
+                             highlightbackground=BORDER,
+                             highlightcolor=color)
+            entry.pack(fill="x", ipady=5)
+            vars_[key] = sv
+
+        return vars_
+
+    # ────────────────────────────────────────
+    #  Lecture / validation
+    # ────────────────────────────────────────
+    def _get(self, vars_, key, label, lo=None, hi=None, nonzero=False):
+        raw = vars_[key].get().strip().replace(",", ".")
+        try:
+            val = float(raw)
+        except ValueError:
+            raise ValueError(f"{label} : valeur invalide → \"{raw}\"")
+        if nonzero and val == 0:
+            raise ValueError(f"{label} ne peut pas être 0")
+        if lo is not None and not (lo <= val <= hi):
+            raise ValueError(f"{label} doit être entre {lo} et {hi} m")
+        return val
+
+    # ────────────────────────────────────────
+    #  SIMULATION
+    # ────────────────────────────────────────
+    def run_simulation(self):
+        try:
+            m1  = self._get(self.f1, "masse", "Masse V1",  nonzero=True)
+            vi1 = self._get(self.f1, "vi",    "Vitesse V1")
+            xi1 = self._get(self.f1, "xi",    "Xi V1",  -20, 20)
+            xf1 = self._get(self.f1, "xf",    "Xf V1",  -20, 20)
+            yi1 = self._get(self.f1, "yi",    "Yi V1",  -20, 20)
+            yf1 = self._get(self.f1, "yf",    "Yf V1",  -20, 20)
+
+            m2  = self._get(self.f2, "masse", "Masse V2",  nonzero=True)
+            vi2 = self._get(self.f2, "vi",    "Vitesse V2")
+            xi2 = self._get(self.f2, "xi",    "Xi V2",  -20, 20)
+            xf2 = self._get(self.f2, "xf",    "Xf V2",  -20, 20)
+            yi2 = self._get(self.f2, "yi",    "Yi V2",  -20, 20)
+            yf2 = self._get(self.f2, "yf",    "Yf V2",  -20, 20)
+        except ValueError as e:
+            messagebox.showerror("Erreur de saisie", str(e))
+            return
+
+        N   = 1000
+        x1  = np.linspace(xi1, xf1, N)
+        y1  = np.linspace(yi1, yf1, N)
+        x2  = np.linspace(xi2, xf2, N)
+        y2  = np.linspace(yi2, yf2, N)
+
+        collision = False
+        col_idx   = N - 1
+        TOL = 0.6
+        for i in range(N):
+            dist = math.sqrt((x1[i]-x2[i])**2 + (y1[i]-y2[i])**2)
+            if dist <= TOL:
+                collision = True
+                col_idx   = i
+                break
+
+        # Physique : collision parfaitement inélastique
+        vf      = (m1 * vi1 + m2 * vi2) / (m1 + m2)
+        ke1i    = 0.5 * m1 * vi1**2
+        ke2i    = 0.5 * m2 * vi2**2
+        ke_f    = 0.5 * (m1 + m2) * vf**2
+        ke_loss = ke1i + ke2i - ke_f
+
+        self._data = dict(
+            x1=x1, y1=y1, x2=x2, y2=y2,
+            collision=collision, col_idx=col_idx,
+            m1=m1, m2=m2, vi1=vi1, vi2=vi2, vf=vf,
+            ke1i=ke1i, ke2i=ke2i, ke_f=ke_f, ke_loss=ke_loss,
+        )
+
+        self._show_results()
+        self._start_anim()
+
+    # ────────────────────────────────────────
+    #  RÉSULTATS TEXTE
+    # ────────────────────────────────────────
+    def _show_results(self):
+        d = self._data
+        # Vider (garder le label titre)
+        for w in self.res_inner.winfo_children()[1:]:
+            w.destroy()
+
+        # Badge collision
+        if d["collision"]:
+            bg2, fg2, txt = "#2a0a10", RED,   "⚠  COLLISION DÉTECTÉE"
+        else:
+            bg2, fg2, txt = "#0a1e12", GREEN, "✔  AUCUNE COLLISION"
+
+        badge = tk.Frame(self.res_inner, bg=bg2,
+                         highlightbackground=fg2, highlightthickness=1)
+        badge.pack(fill="x", pady=(0, 10))
+        tk.Label(badge, text=txt, font=("Courier", 9, "bold"),
+                 fg=fg2, bg=bg2, pady=6).pack()
+
+        # Tableau
+        rows = [
+            ("",           "V1",                   "V2"),
+            ("Masse",      f"{d['m1']:.1f} kg",    f"{d['m2']:.1f} kg"),
+            ("Vi",         f"{d['vi1']:.2f} m/s",  f"{d['vi2']:.2f} m/s"),
+            ("Vf (inél.)", f"{d['vf']:.3f} m/s",   f"{d['vf']:.3f} m/s"),
+            ("Éc. init.",  f"{d['ke1i']:.1f} J",   f"{d['ke2i']:.1f} J"),
+            ("Éc. finale", f"{d['ke_f']:.1f} J",   "—"),
+            ("Éc. perdue", f"{d['ke_loss']:.1f} J","—"),
+        ]
+
+        tbl = tk.Frame(self.res_inner, bg=PANEL)
+        tbl.pack(fill="x")
+        for c in range(3):
+            tbl.columnconfigure(c, weight=1)
+
+        for r, row in enumerate(rows):
+            for c, cell in enumerate(row):
+                fg = ([MUTED, V1C, V2C] if r == 0 else [TEXT, V1C, V2C])[c]
+                font = ("Courier", 8, "bold") if r == 0 else ("Courier", 9)
+                tk.Label(tbl, text=cell, font=font, fg=fg, bg=PANEL,
+                         padx=6, pady=4, anchor="w"
+                         ).grid(row=r*2, column=c, sticky="ew")
+            if r < len(rows) - 1:
+                tk.Frame(tbl, bg=BORDER, height=1
+                         ).grid(row=r*2+1, column=0, columnspan=3, sticky="ew")
+
+    # ────────────────────────────────────────
+    #  ANIMATION
+    # ────────────────────────────────────────
+    def _start_anim(self):
+        if self._anim_id:
+            self.after_cancel(self._anim_id)
+        self._anim_step = 0
+        self._tick()
+
+    def _tick(self):
+        if self._data is None:
+            return
+        N    = len(self._data["x1"])
+        SKIP = 8
+        nxt  = min(self._anim_step + SKIP, N - 1)
+        self._draw_scene(nxt)
+        if nxt < N - 1:
+            self._anim_step = nxt
+            self._anim_id = self.after(16, self._tick)
+        else:
+            self._anim_id = None
+
+    def _draw_idle(self):
+        if self._data is None:
+            self._draw_scene_empty()
+
+    # ────────────────────────────────────────
+    #  DESSIN
+    # ────────────────────────────────────────
+    def _w2c(self, wx, wy):
+        """World (−20..20) → canvas pixels."""
+        cw = self.canvas.winfo_width()
+        ch = self.canvas.winfo_height()
+        if cw < 2 or ch < 2:
+            return 0, 0
+        mg    = 30
+        scale = min((cw - 2*mg) / 40.0, (ch - 2*mg) / 40.0)
+        return cw/2 + wx*scale, ch/2 - wy*scale
+
+    def _draw_scene_empty(self):
+        self.canvas.delete("all")
+        self._grid()
+
+    def _grid(self):
+        for v in range(-20, 21, 5):
+            cx, _  = self._w2c(v,  0)
+            _, cy  = self._w2c(0,  v)
+            _, y0  = self._w2c(0, -20)
+            _, y1  = self._w2c(0,  20)
+            x0, _  = self._w2c(-20, 0)
+            x1, _  = self._w2c( 20, 0)
+            self.canvas.create_line(cx, y0, cx, y1, fill="#111827", width=1)
+            self.canvas.create_line(x0, cy, x1, cy, fill="#111827", width=1)
+        # axes
+        ox, oy = self._w2c(0,  0)
+        _, yt  = self._w2c(0,  20)
+        _, yb  = self._w2c(0, -20)
+        xl, _  = self._w2c(-20, 0)
+        xr, _  = self._w2c( 20, 0)
+        self.canvas.create_line(xl, oy, xr, oy, fill=BORDER, width=1)
+        self.canvas.create_line(ox, yt, ox, yb, fill=BORDER, width=1)
+        self.canvas.create_text(xr - 8, oy - 10,
+                                 text="X", font=("Courier", 7), fill=MUTED)
+        self.canvas.create_text(ox + 10, yt + 8,
+                                 text="Y", font=("Courier", 7), fill=MUTED)
+
+    def _draw_scene(self, step):
+        self.canvas.delete("all")
+        self._grid()
+        d = self._data
+        if d is None:
+            return
+
+        # Trajectoires pointillées
+        if step > 1:
+            sub = max(1, step // 300)
+            pts1, pts2 = [], []
+            for i in range(0, step, sub):
+                x, y = self._w2c(d["x1"][i], d["y1"][i])
+                pts1 += [x, y]
+                x, y = self._w2c(d["x2"][i], d["y2"][i])
+                pts2 += [x, y]
+            if len(pts1) >= 4:
+                self.canvas.create_line(*pts1, fill=V1C, width=1, dash=(4, 4))
+            if len(pts2) >= 4:
+                self.canvas.create_line(*pts2, fill=V2C, width=1, dash=(4, 4))
+
+        # Véhicules
+        def draw_car(wx, wy, color, label):
+            cx, cy = self._w2c(wx, wy)
+            r = 11
+            self.canvas.create_oval(cx-r-4, cy-r-4, cx+r+4, cy+r+4,
+                                     outline=color, width=1, dash=(2, 4))
+            self.canvas.create_oval(cx-r, cy-r, cx+r, cy+r,
+                                     fill="#0a0c12", outline=color, width=2)
+            self.canvas.create_text(cx, cy, text=label,
+                                     font=("Courier", 9, "bold"), fill=color)
+
+        draw_car(d["x1"][step], d["y1"][step], V1C, "1")
+        draw_car(d["x2"][step], d["y2"][step], V2C, "2")
+
+        # Marqueur d'impact
+        if d["collision"] and step >= d["col_idx"]:
+            ci = d["col_idx"]
+            ax, ay = self._w2c(d["x1"][ci], d["y1"][ci])
+            bx, by = self._w2c(d["x2"][ci], d["y2"][ci])
+            mx, my = (ax+bx)/2, (ay+by)/2
+            flash = 22
+            self.canvas.create_oval(mx-flash, my-flash,
+                                     mx+flash, my+flash,
+                                     outline=ACCENT, width=2, dash=(3, 3))
+            self.canvas.create_text(mx, my - flash - 10,
+                                     text="★ IMPACT",
+                                     font=("Courier", 8, "bold"),
+                                     fill=ACCENT)
+
+
+if __name__ == "__main__":
+    app = CollisionApp()
+    app.mainloop()
