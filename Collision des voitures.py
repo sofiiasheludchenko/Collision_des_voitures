@@ -167,3 +167,153 @@ donnes_dict = {
 }
 df_donnes_collision_voitures = pd.DataFrame(donnes_dict, index=['Vehicule 1', 'Vehicule 2'])
 print(df_donnes_collision_voitures.round(2).to_string())
+
+
+
+
+-------------------------------------------------------------------------------------------------------
+
+
+
+
+import pandas as pd
+import tkinter as tk
+import numpy as np
+
+# ==============================Voiture1==============================
+
+# ------------------------------masse 1------------------------------
+while True:
+    try:
+        masse_voiture1 = float(input("Entrer la masse (kg) du premier vehicule:"))
+        if masse_voiture1 == 0:
+            print("ERREUR: La masse (kg) du véhicule 1 ne peut pas être 0 kg!")
+        else:
+            break
+    except ValueError:
+        print("ERREUR: Veuillez entrer un nombre valide!")
+
+# ------------------------------vitesses 1------------------------------
+while True:
+    try:
+        vitesse_initiale1 = float(input("Entrer la vitesse initiale (m/s) du premier véhicule:"))
+        break
+    except ValueError:
+        print("ERREUR: Veuillez entrer un nombre valide!")
+
+
+# ------------------------------Trajectoire voiture 1------------------------------
+while True:
+    try:
+        position_x_1 = float(input("Indiquer la position initiale (m) de la voiture 1 en x entre -20m et 20m:"))
+        if -20 <= position_x_1 <= 20:
+            break
+        else:
+            print("ERREUR: La position initiale (m) de la voiture 1 en x doit être entre -20m et 20m")
+    except ValueError:
+        print("ERREUR: Veuillez entrer un nombre valide!")
+
+while True:
+    try:
+        position_y_1 = float(input("Indiquer la position initiale (m) de la voiture 1 en y entre -20m et 20m:"))
+        if -20 <= position_y_1 <= 20:
+            break
+        else:
+            print("ERREUR: La position initiale (m) de la voiture 1 en y doit être entre -20m et 20m")
+    except ValueError:
+        print("ERREUR: Veuillez entrer un nombre valide!")
+
+
+while True:
+    try:
+        angle_1 = float(input("Indiquer l'angle de la trajectoire de la première voiture par rapport à l'horizontale entre 0° et 360°:"))
+        if 0 <= angle_1 <= 360:
+            break
+        else:
+            print("ERREUR: L'angle de la trajectoire de la voiture doit être entre 0° et 360°")
+    except ValueError:
+        print("ERREUR: Veuillez entrer un nombre valide!")
+
+
+
+
+# ==============================Voiture2==============================
+
+# ------------------------------masse 2------------------------------
+while True:
+    try:
+        masse_voiture2 = float(input("Entrer la masse (kg) du deuxième vehicule:"))
+        if masse_voiture2 == 0:
+            print("ERREUR: La masse (kg) du véhicule 2 ne peut pas être 0 kg!")
+        else:
+            break
+    except ValueError:
+        print("ERREUR: Veuillez entrer un nombre valide!")
+
+# ------------------------------vitesses 2------------------------------
+while True:
+    try:
+        vitesse_initiale2 = float(input("Entrer la vitesse initiale (m/s) du deuxième véhicule:"))
+        break
+    except ValueError:
+        print("ERREUR: Veuillez entrer un nombre valide!")
+# ------------------------------positions 2 en x------------------------------
+while True:
+    try:
+        position_x_2 = float(input("Indiquer la position initiale (m) de la voiture 2 en x entre -20m et 20m:"))
+        if -20 <= position_x_2 <= 20:
+            break
+        else:
+            print("ERREUR: La position initiale (m) de la voiture 2 en x doit être entre -20m et 20m")
+    except ValueError:
+        print("ERREUR: Veuillez entrer un nombre valide!")
+
+while True:
+    try:
+        position_y_2 = float(input("Indiquer la position initiale (m) de la voiture 2 en y entre -20m et 20m:"))
+        if -20 <= position_y_2 <= 20:
+            break
+        else:
+            print("ERREUR: La position initiale (m) de la voiture 2 en y doit être entre -20m et 20m")
+    except ValueError:
+        print("ERREUR: Veuillez entrer un nombre valide!")
+
+
+while True:
+    try:
+        angle_2 = float(input("Indiquer l'angle de la trajectoire de la deuxième voiture par rapport à l'horizontale entre 0° et 360°:"))
+        if 0 <= angle_2 <= 360:
+            break
+        else:
+            print("ERREUR: L'angle de la trajectoire de la voiture doit être entre 0° et 360°")
+    except ValueError:
+        print("ERREUR: Veuillez entrer un nombre valide!")
+
+
+
+
+# vérification de collisions
+#==============================Collision sur trajectoire==============================
+
+
+# Quantité de mouvement
+q_initial = (masse_voiture1*vitesse_initiale1) + (masse_voiture2*vitesse_initiale2)
+q_final = (  )
+
+
+
+
+
+
+#------------------------------creation du tableau comparatif------------------------------
+
+donnes_dict = {
+    'Vitesse initiale (m/s)': [vitesse_initiale1, vitesse_initiale2],
+    "Position initiale (m)": [position_x_1, position_x_2],
+    'Position finale (m)': [positionfinale_x_1, positionfinale_x_2],
+    'Trajectoire (m)' : [x_traj_1[i],y_traj_1[i]],
+    'Vitesse finale des vehicules après la collision (m/s)': [0,0], #parfaitement inelastique (pour le sprint 1)
+    'Masse (kg)': [masse_voiture1, masse_voiture2],
+}
+df_donnes_collision_voitures = pd.DataFrame(donnes_dict, index=['Vehicule 1', 'Vehicule 2'])
+print(df_donnes_collision_voitures.round(2).to_string())
