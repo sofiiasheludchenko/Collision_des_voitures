@@ -1,319 +1,189 @@
 import pandas as pd
-import tkinter as tk
 import numpy as np
 
 # ==============================Voiture1==============================
 
-# ------------------------------masse 1------------------------------
 while True:
     try:
         masse_voiture1 = float(input("Entrer la masse (kg) du premier vehicule:"))
         if masse_voiture1 == 0:
-            print("ERREUR: La masse (kg) du véhicule 1 ne peut pas être 0 kg!")
+            print("ERREUR: La masse ne peut pas être 0!")
         else:
             break
     except ValueError:
-        print("ERREUR: Veuillez entrer un nombre valide!")
+        print("ERREUR: nombre invalide!")
 
-# ------------------------------vitesses 1------------------------------
 while True:
     try:
         vitesse_initiale1 = float(input("Entrer la vitesse initiale (m/s) du premier véhicule:"))
         break
     except ValueError:
-        print("ERREUR: Veuillez entrer un nombre valide!")
+        print("ERREUR!")
 
-
-# ------------------------------positions 1 en x------------------------------
 while True:
     try:
-        position_x_1 = float(input("Indiquer la position initiale (m) de la voiture 1 en x entre -20m et 20m:"))
+        position_x_1 = float(input("Position x voiture 1 (-20 à 20):"))
         if -20 <= position_x_1 <= 20:
             break
-        else:
-            print("ERREUR: La position initiale (m) de la voiture 1 en x doit être entre -20m et 20m")
-    except ValueError:
-        print("ERREUR: Veuillez entrer un nombre valide!")
+    except:
+        print("ERREUR!")
 
 while True:
     try:
-        positionfinale_x_1 = float(input("Indiquer la position finale (m) de la voiture 1 en x entre -20m et 20m:"))
-        if -20 <= positionfinale_x_1 <= 20:
-            break
-        else:
-            print("ERREUR: La position finale (m) de la voiture 1 en x doit être entre -20m et 20m")
-    except ValueError:
-        print("ERREUR: Veuillez entrer un nombre valide!")
-
-    # ------------------------------positions 1 en y------------------------------
-while True:
-    try:
-        position_y_1 = float(input("Indiquer la position initiale (m) de la voiture 1 en y entre -20m et 20m:"))
+        position_y_1 = float(input("Position y voiture 1 (-20 à 20):"))
         if -20 <= position_y_1 <= 20:
             break
-        else:
-            print("ERREUR: La position initiale (m) de la voiture 1 en y doit être entre -20m et 20m")
-    except ValueError:
-        print("ERREUR: Veuillez entrer un nombre valide!")
+    except:
+        print("ERREUR!")
 
 while True:
     try:
-        positionfinale_y_1 = float(input("Indiquer la position finale (m) de la voiture 1 en y entre -20m et 20m:"))
-        if -20 <= positionfinale_y_1 <= 20:
-            break
-        else:
-            print("ERREUR: La position finale (m) de la voiture 1 en y doit être entre -20m et 20m")
-    except ValueError:
-        print("ERREUR: Veuillez entrer un nombre valide!")
-
-# ==============================Voiture2==============================
-
-# ------------------------------masse 2------------------------------
-while True:
-    try:
-        masse_voiture2 = float(input("Entrer la masse (kg) du deuxième vehicule:"))
-        if masse_voiture2 == 0:
-            print("ERREUR: La masse (kg) du véhicule 2 ne peut pas être 0 kg!")
-        else:
-            break
-    except ValueError:
-        print("ERREUR: Veuillez entrer un nombre valide!")
-
-# ------------------------------vitesses 2------------------------------
-while True:
-    try:
-        vitesse_initiale2 = float(input("Entrer la vitesse initiale (m/s) du deuxième véhicule:"))
-        break
-    except ValueError:
-        print("ERREUR: Veuillez entrer un nombre valide!")
-# ------------------------------positions 2 en x------------------------------
-while True:
-    try:
-        position_x_2 = float(input("Indiquer la position initiale (m) de la voiture 2 en x entre -20m et 20m:"))
-        if -20 <= position_x_2 <= 20:
-            break
-        else:
-            print("ERREUR: La position initiale (m) de la voiture 2 en x doit être entre -20m et 20m")
-    except ValueError:
-        print("ERREUR: Veuillez entrer un nombre valide!")
-
-while True:
-    try:
-        positionfinale_x_2 = float(input("Indiquer la position finale (m) de la voiture 2 en x entre -20m et 20m:"))
-        if -20 <= positionfinale_x_2 <= 20:
-            break
-        else:
-            print("ERREUR: La position finale (m) de la voiture 2 en x doit être entre -20m et 20m")
-    except ValueError:
-        print("ERREUR: Veuillez entrer un nombre valide!")
-
-# ------------------------------positions 2 en y------------------------------
-while True:
-    try:
-        position_y_2 = float(input("Indiquer la position initiale (m) de la voiture 2 en y entre -20m et 20m:"))
-        if -20 <= position_y_2 <= 20:
-            break
-        else:
-            print("ERREUR: La position initiale (m) de la voiture 2 en y doit être entre -20m et 20m")
-    except ValueError:
-        print("ERREUR: Veuillez entrer un nombre valide!")
-
-while True:
-    try:
-        positionfinale_y_2 = float(input("Indiquer la position finale (m) de la voiture 2 en y entre -20m et 20m:"))
-        if -20 <= positionfinale_y_2 <= 20:
-            break
-        else:
-            print("ERREUR: La position finale (m) de la voiture 2 en y doit être entre -20m et 20m")
-    except ValueError:
-        print("ERREUR: Veuillez entrer un nombre valide!")
-
-
-# vérification de collisions
-#==============================Collision sur trajectoire==============================
-
-# Nombre de pas pour simuler le déplacement
-n_steps = 1000
-
-# Création des trajectoires linéaires
-x_traj_1 = np.linspace(position_x_1, positionfinale_x_1, n_steps)
-y_traj_1 = np.linspace(position_y_1, positionfinale_y_1, n_steps)
-
-x_traj_2 = np.linspace(position_x_2, positionfinale_x_2, n_steps)
-y_traj_2 = np.linspace(position_y_2, positionfinale_y_2, n_steps)
-
-collision_detectee = False
-tolerance = 0.1  # tolérance de 0.1 m pour considérer une collision
-
-for i in range(n_steps):
-    distance = np.sqrt((x_traj_1[i] - x_traj_2[i])**2 + (y_traj_1[i] - y_traj_2[i])**2)
-    if distance <= tolerance:
-        collision_detectee = True
-        print("\n Collision détectée !")
-        break
-
-if not collision_detectee:
-    print("\n Aucune collision détectée sur la trajectoire.")
-
-#------------------------------creation du tableau comparatif------------------------------
-
-donnes_dict = {
-    'Vitesse initiale (m/s)': [vitesse_initiale1, vitesse_initiale2],
-    "Position initiale (m)": [position_x_1, position_x_2],
-    'Position finale (m)': [positionfinale_x_1, positionfinale_x_2],
-    'Trajectoire (m)' : [x_traj_1[i],y_traj_1[i]],
-    'Vitesse finale des vehicules après la collision (m/s)': [0,0], #parfaitement inelastique (pour le sprint 1)
-    'Masse (kg)': [masse_voiture1, masse_voiture2],
-}
-df_donnes_collision_voitures = pd.DataFrame(donnes_dict, index=['Vehicule 1', 'Vehicule 2'])
-print(df_donnes_collision_voitures.round(2).to_string())
-
-
-
-
--------------------------------------------------------------------------------------------------------
-
-
-
-
-import pandas as pd
-import tkinter as tk
-import numpy as np
-
-# ==============================Voiture1==============================
-
-# ------------------------------masse 1------------------------------
-while True:
-    try:
-        masse_voiture1 = float(input("Entrer la masse (kg) du premier vehicule:"))
-        if masse_voiture1 == 0:
-            print("ERREUR: La masse (kg) du véhicule 1 ne peut pas être 0 kg!")
-        else:
-            break
-    except ValueError:
-        print("ERREUR: Veuillez entrer un nombre valide!")
-
-# ------------------------------vitesses 1------------------------------
-while True:
-    try:
-        vitesse_initiale1 = float(input("Entrer la vitesse initiale (m/s) du premier véhicule:"))
-        break
-    except ValueError:
-        print("ERREUR: Veuillez entrer un nombre valide!")
-
-
-# ------------------------------Trajectoire voiture 1------------------------------
-while True:
-    try:
-        position_x_1 = float(input("Indiquer la position initiale (m) de la voiture 1 en x entre -20m et 20m:"))
-        if -20 <= position_x_1 <= 20:
-            break
-        else:
-            print("ERREUR: La position initiale (m) de la voiture 1 en x doit être entre -20m et 20m")
-    except ValueError:
-        print("ERREUR: Veuillez entrer un nombre valide!")
-
-while True:
-    try:
-        position_y_1 = float(input("Indiquer la position initiale (m) de la voiture 1 en y entre -20m et 20m:"))
-        if -20 <= position_y_1 <= 20:
-            break
-        else:
-            print("ERREUR: La position initiale (m) de la voiture 1 en y doit être entre -20m et 20m")
-    except ValueError:
-        print("ERREUR: Veuillez entrer un nombre valide!")
-
-
-while True:
-    try:
-        angle_1 = float(input("Indiquer l'angle de la trajectoire de la première voiture par rapport à l'horizontale entre 0° et 360°:"))
+        angle_1 = float(input("Angle voiture 1 (0 à 360):"))
         if 0 <= angle_1 <= 360:
             break
-        else:
-            print("ERREUR: L'angle de la trajectoire de la voiture doit être entre 0° et 360°")
-    except ValueError:
-        print("ERREUR: Veuillez entrer un nombre valide!")
-
-
-
+    except:
+        print("ERREUR!")
 
 # ==============================Voiture2==============================
 
-# ------------------------------masse 2------------------------------
 while True:
     try:
         masse_voiture2 = float(input("Entrer la masse (kg) du deuxième vehicule:"))
         if masse_voiture2 == 0:
-            print("ERREUR: La masse (kg) du véhicule 2 ne peut pas être 0 kg!")
+            print("ERREUR!")
         else:
             break
-    except ValueError:
-        print("ERREUR: Veuillez entrer un nombre valide!")
+    except:
+        print("ERREUR!")
 
-# ------------------------------vitesses 2------------------------------
 while True:
     try:
         vitesse_initiale2 = float(input("Entrer la vitesse initiale (m/s) du deuxième véhicule:"))
         break
-    except ValueError:
-        print("ERREUR: Veuillez entrer un nombre valide!")
-# ------------------------------positions 2 en x------------------------------
+    except:
+        print("ERREUR!")
+
 while True:
     try:
-        position_x_2 = float(input("Indiquer la position initiale (m) de la voiture 2 en x entre -20m et 20m:"))
+        position_x_2 = float(input("Position x voiture 2 (-20 à 20):"))
         if -20 <= position_x_2 <= 20:
             break
-        else:
-            print("ERREUR: La position initiale (m) de la voiture 2 en x doit être entre -20m et 20m")
-    except ValueError:
-        print("ERREUR: Veuillez entrer un nombre valide!")
+    except:
+        print("ERREUR!")
 
 while True:
     try:
-        position_y_2 = float(input("Indiquer la position initiale (m) de la voiture 2 en y entre -20m et 20m:"))
+        position_y_2 = float(input("Position y voiture 2 (-20 à 20):"))
         if -20 <= position_y_2 <= 20:
             break
-        else:
-            print("ERREUR: La position initiale (m) de la voiture 2 en y doit être entre -20m et 20m")
-    except ValueError:
-        print("ERREUR: Veuillez entrer un nombre valide!")
-
+    except:
+        print("ERREUR!")
 
 while True:
     try:
-        angle_2 = float(input("Indiquer l'angle de la trajectoire de la deuxième voiture par rapport à l'horizontale entre 0° et 360°:"))
+        angle_2 = float(input("Angle voiture 2 (0 à 360):"))
         if 0 <= angle_2 <= 360:
             break
-        else:
-            print("ERREUR: L'angle de la trajectoire de la voiture doit être entre 0° et 360°")
-    except ValueError:
-        print("ERREUR: Veuillez entrer un nombre valide!")
+    except:
+        print("ERREUR!")
 
+# ==============================MOUVEMENT==============================
 
+angle1_rad = np.radians(angle_1)
+angle2_rad = np.radians(angle_2)
 
+vx1 = vitesse_initiale1 * np.cos(angle1_rad)
+vy1 = vitesse_initiale1 * np.sin(angle1_rad)
 
-# vérification de collisions
-#==============================Collision sur trajectoire==============================
+vx2 = vitesse_initiale2 * np.cos(angle2_rad)
+vy2 = vitesse_initiale2 * np.sin(angle2_rad)
 
+# ==============================DETECTION COLLISION==============================
 
-# Quantité de mouvement
-q_initial = (masse_voiture1*vitesse_initiale1) + (masse_voiture2*vitesse_initiale2)
-q_final = (  )
+dt = 0.01
+temps = 0
+temps_max = 10
 
+collision = False
 
+while temps < temps_max:
+    x1 = position_x_1 + vx1 * temps
+    y1 = position_y_1 + vy1 * temps
 
+    x2 = position_x_2 + vx2 * temps
+    y2 = position_y_2 + vy2 * temps
 
+    distance = np.sqrt((x1 - x2)**2 + (y1 - y2)**2)
 
+    if distance < 1:
+        collision = True
+        temps_collision = temps
+        positionfinale_x_1 = x1
+        positionfinale_x_2 = x2
+        break
 
-#------------------------------creation du tableau comparatif------------------------------
+    temps += dt
+
+# ==============================PHYSIQUE==============================
+
+if collision:
+    # Quantité de mouvement
+    q1 = masse_voiture1 * vitesse_initiale1
+    q2 = masse_voiture2 * vitesse_initiale2
+
+    q_total = q1 + q2
+
+    # Vitesse finale (inelastique)
+    vitesse_finale = q_total / (masse_voiture1 + masse_voiture2)
+
+    # variation de vitesse
+    delta_v1 = vitesse_finale - vitesse_initiale1
+    delta_v2 = vitesse_finale - vitesse_initiale2
+
+    # temps collision physique
+    temps_collision_physique = 0.1
+
+    # décélération
+    a1 = delta_v1 / temps_collision_physique
+    a2 = delta_v2 / temps_collision_physique
+
+    # forces
+    F1 = masse_voiture1 * a1
+    F2 = masse_voiture2 * a2
+
+    # énergie
+    E_initiale = 0.5 * masse_voiture1 * vitesse_initiale1**2 + 0.5 * masse_voiture2 * vitesse_initiale2**2
+    E_finale = 0.5 * (masse_voiture1 + masse_voiture2) * vitesse_finale**2
+    E_dissipee = E_initiale - E_finale
+
+    print("\n===== COLLISION DETECTEE =====")
+    print("Temps de collision:", temps_collision, "s")
+    print("Vitesse finale:", vitesse_finale, "m/s")
+    print("Force:", abs(F1), "N")
+    print("Energie dissipée:", E_dissipee, "J")
+
+else:
+    print("\nAucune collision détectée")
+
+# ==============================TRAJECTOIRES==============================
+
+n_steps = 50
+
+x_traj_1 = np.linspace(position_x_1, position_x_1 + vx1*2, n_steps)
+y_traj_1 = np.linspace(position_y_1, position_y_1 + vy1*2, n_steps)
+
+# ==============================TABLEAU==============================
+
+positionfinale_x_1 = position_x_1 if not collision else positionfinale_x_1
+positionfinale_x_2 = position_x_2 if not collision else positionfinale_x_2
 
 donnes_dict = {
     'Vitesse initiale (m/s)': [vitesse_initiale1, vitesse_initiale2],
-    "Position initiale (m)": [position_x_1, position_x_2],
-    'Position finale (m)': [positionfinale_x_1, positionfinale_x_2],
-    'Trajectoire (m)' : [x_traj_1[i],y_traj_1[i]],
-    'Vitesse finale des vehicules après la collision (m/s)': [0,0], #parfaitement inelastique (pour le sprint 1)
+    'Position initiale X': [position_x_1, position_x_2],
+    'Position finale X': [positionfinale_x_1, positionfinale_x_2],
     'Masse (kg)': [masse_voiture1, masse_voiture2],
 }
-df_donnes_collision_voitures = pd.DataFrame(donnes_dict, index=['Vehicule 1', 'Vehicule 2'])
-print(df_donnes_collision_voitures.round(2).to_string())
+
+df = pd.DataFrame(donnes_dict, index=['Vehicule 1', 'Vehicule 2'])
+print("\nTableau récapitulatif:")
+print(df.round(2).to_string())round(2).to_string())
