@@ -128,17 +128,17 @@ while temps < temps_max:
 
 if collision:
     # Quantité de mouvement
-    q1 = masse_voiture1 * vitesse_initiale1
-    q2 = masse_voiture2 * vitesse_initiale2
+    q1 = masse_voiture1 * vx1
+    q2 = masse_voiture2 * vx2
 
     q_total = q1 + q2
 
     # Vitesse finale (inelastique)
-    vitesse_finale = q_total / (masse_voiture1 + masse_voiture2)
+    vitesse_finale = (q1 + q2) / (masse_voiture1 + masse_voiture2)
 
     # variation de vitesse
-    delta_v1 = vitesse_finale - vitesse_initiale1
-    delta_v2 = vitesse_finale - vitesse_initiale2
+    delta_v1 = vitesse_finale - vx1
+    delta_v2 = vitesse_finale - vx2
 
     # temps collision physique
     temps_collision_physique = 0.1
@@ -186,4 +186,4 @@ donnes_dict = {
 
 df = pd.DataFrame(donnes_dict, index=['Vehicule 1', 'Vehicule 2'])
 print("\nTableau récapitulatif:")
-print(df.round(2).to_string())round(2).to_string())
+print(df.round(2).to_string())f.round(2).to_string())round(2).to_string())
