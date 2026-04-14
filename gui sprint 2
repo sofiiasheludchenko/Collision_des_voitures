@@ -1,0 +1,271 @@
+import tkinter as tk
+from tkinter import messagebox
+import numpy as np
+
+# ==============================FENETRE==============================
+
+fenetre = tk.Tk()
+fenetre.title("Simulation de collision")
+fenetre.configure(bg="white")
+
+# ==============================VOITURE 1==============================
+
+label_v1 = tk.Label(fenetre, text="VÉHICULE 1", bg="white", fg="blue", font=("Arial", 12, "bold"))
+label_v1.grid(row=0, column=0, columnspan=2, pady=5)
+
+tk.Label(fenetre, text="Masse (kg):", bg="white").grid(row=1, column=0, sticky="e", padx=5)
+entree_m1 = tk.Entry(fenetre)
+entree_m1.insert(0, "1200")
+entree_m1.grid(row=1, column=1, padx=5, pady=2)
+
+tk.Label(fenetre, text="Vitesse initiale (m/s):", bg="white").grid(row=2, column=0, sticky="e", padx=5)
+entree_v1 = tk.Entry(fenetre)
+entree_v1.insert(0, "20")
+entree_v1.grid(row=2, column=1, padx=5, pady=2)
+
+tk.Label(fenetre, text="Position X (-20 à 20):", bg="white").grid(row=3, column=0, sticky="e", padx=5)
+entree_x1 = tk.Entry(fenetre)
+entree_x1.insert(0, "-15")
+entree_x1.grid(row=3, column=1, padx=5, pady=2)
+
+tk.Label(fenetre, text="Position Y (-20 à 20):", bg="white").grid(row=4, column=0, sticky="e", padx=5)
+entree_y1 = tk.Entry(fenetre)
+entree_y1.insert(0, "0")
+entree_y1.grid(row=4, column=1, padx=5, pady=2)
+
+tk.Label(fenetre, text="Angle (0° à 360°):", bg="white").grid(row=5, column=0, sticky="e", padx=5)
+entree_a1 = tk.Entry(fenetre)
+entree_a1.insert(0, "0")
+entree_a1.grid(row=5, column=1, padx=5, pady=2)
+
+# ==============================VOITURE 2==============================
+
+label_v2 = tk.Label(fenetre, text="VÉHICULE 2", bg="white", fg="red", font=("Arial", 12, "bold"))
+label_v2.grid(row=0, column=2, columnspan=2, pady=5)
+
+tk.Label(fenetre, text="Masse (kg):", bg="white").grid(row=1, column=2, sticky="e", padx=5)
+entree_m2 = tk.Entry(fenetre)
+entree_m2.insert(0, "900")
+entree_m2.grid(row=1, column=3, padx=5, pady=2)
+
+tk.Label(fenetre, text="Vitesse initiale (m/s):", bg="white").grid(row=2, column=2, sticky="e", padx=5)
+entree_v2 = tk.Entry(fenetre)
+entree_v2.insert(0, "15")
+entree_v2.grid(row=2, column=3, padx=5, pady=2)
+
+tk.Label(fenetre, text="Position X (-20 à 20):", bg="white").grid(row=3, column=2, sticky="e", padx=5)
+entree_x2 = tk.Entry(fenetre)
+entree_x2.insert(0, "15")
+entree_x2.grid(row=3, column=3, padx=5, pady=2)
+
+tk.Label(fenetre, text="Position Y (-20 à 20):", bg="white").grid(row=4, column=2, sticky="e", padx=5)
+entree_y2 = tk.Entry(fenetre)
+entree_y2.insert(0, "0")
+entree_y2.grid(row=4, column=3, padx=5, pady=2)
+
+tk.Label(fenetre, text="Angle (0° à 360°):", bg="white").grid(row=5, column=2, sticky="e", padx=5)
+entree_a2 = tk.Entry(fenetre)
+entree_a2.insert(0, "180")
+entree_a2.grid(row=5, column=3, padx=5, pady=2)
+
+# ==============================GRAPHIQUE==============================
+
+canvas = tk.Canvas(fenetre, width=500, height=300, bg="white", bd=1, relief="solid")
+canvas.grid(row=7, column=0, columnspan=4, padx=10, pady=10)
+
+# ==============================RESULTATS==============================
+
+label_resultats = tk.Label(fenetre, text="", bg="white", font=("Arial", 10), justify="left")
+label_resultats.grid(row=8, column=0, columnspan=4, padx=10, pady=5)
+
+# ==============================VARIABLE D'ANIMATION==============================
+
+# On garde l'ID du "after" pour pouvoir l'annuler si on relance
+animation_id = None
+
+# ==============================FONCTIONS==============================
+
+def to_screen(x, y):
+    sx = (x + 22) / 44 * 480 + 10
+    sy = 150 - y / 22 * 130
+    return sx, sy
+
+def dessiner_axes():
+    ox, oy = to_screen(0, 0)
+    canvas.create_line(10, oy, 490, oy, fill="lightgray")
+    canvas.create_line(ox, 10, ox, 290, fill="lightgray")
+
+def lancer_simulation():
+    global animation_id
+
+    # Annuler animation precedente si elle tourne encore
+    if animation_id is not None:
+        fenetre.after_cancel(animation_id)
+
+    # Lire les valeurs
+    try:
+        masse_voiture1 = float(entree_m1.get())
+        vitesse_initiale1 = float(entree_v1.get())
+        position_x_1 = float(entree_x1.get())
+        position_y_1 = float(entree_y1.get())
+        angle_1 = float(entree_a1.get())
+
+        masse_voiture2 = float(entree_m2.get())
+        vitesse_initiale2 = float(entree_v2.get())
+        position_x_2 = float(entree_x2.get())
+        position_y_2 = float(entree_y2.get())
+        angle_2 = float(entree_a2.get())
+    except ValueError:
+        messagebox.showerror("Erreur", "Entrez des nombres valides!")
+        return
+
+    # Calcul des composantes de vitesse
+    angle1_rad = np.radians(angle_1)
+    angle2_rad = np.radians(angle_2)
+
+    vx1 = vitesse_initiale1 * np.cos(angle1_rad)
+    vy1 = vitesse_initiale1 * np.sin(angle1_rad)
+    vx2 = vitesse_initiale2 * np.cos(angle2_rad)
+    vy2 = vitesse_initiale2 * np.sin(angle2_rad)
+
+    # ==============================CALCULER TOUTE LA TRAJECTOIRE D'ABORD==============================
+
+    dt = 0.01
+    temps = 0
+    temps_max = 10
+    collision = False
+    temps_collision = 0
+    cx1, cy1 = position_x_1, position_y_1
+
+    traj1 = [(position_x_1, position_y_1)]
+    traj2 = [(position_x_2, position_y_2)]
+
+    resultats_collision = None
+
+    while temps < temps_max:
+        x1 = position_x_1 + vx1 * temps
+        y1 = position_y_1 + vy1 * temps
+        x2 = position_x_2 + vx2 * temps
+        y2 = position_y_2 + vy2 * temps
+
+        # Enregistrer chaque 0.1 seconde pour l'animation
+        if round(temps * 100) % 6 == 0:
+            traj1.append((x1, y1))
+            traj2.append((x2, y2))
+
+        distance = np.sqrt((x1 - x2)**2 + (y1 - y2)**2)
+
+        if distance < 1:
+            collision = True
+            temps_collision = temps
+            cx1, cy1 = x1, y1
+            break
+
+        temps += dt
+
+    # Calculer les resultats si collision
+    if collision:
+        # Quantité de mouvement (axe X seulement comme dans ton code 2)
+        q1 = masse_voiture1 * vx1
+        q2 = masse_voiture2 * vx2
+        q_total = q1 + q2
+
+        # Vitesse finale
+        vitesse_finale = q_total / (masse_voiture1 + masse_voiture2)
+
+        # Variations de vitesse
+        delta_v1 = vitesse_finale - vx1
+        delta_v2 = vitesse_finale - vx2
+
+        # Temps de collision physique
+        temps_collision_physique = 0.1
+
+        # Accélérations
+        a1 = delta_v1 / temps_collision_physique
+        a2 = delta_v2 / temps_collision_physique
+
+        # Forces
+        F1 = masse_voiture1 * a1
+        F2 = masse_voiture2 * a2
+
+        # Énergies
+        E_initiale = (
+                0.5 * masse_voiture1 * vitesse_initiale1 ** 2 +
+                0.5 * masse_voiture2 * vitesse_initiale2 ** 2
+        )
+
+        E_finale = 0.5 * (masse_voiture1 + masse_voiture2) * vitesse_finale ** 2
+        E_dissipee = E_initiale - E_finale
+
+        resultats_collision = (temps_collision, vitesse_finale, F1, E_dissipee, cx1, cy1)
+
+    # ==============================LANCER L'ANIMATION==============================
+
+    canvas.delete("all")
+    label_resultats.config(text="Animation en cours...", fg="gray")
+    dessiner_axes()
+
+    # etape = index dans traj1/traj2 qu'on est rendu
+    etape = [0]
+
+    def animer():
+        global animation_id
+
+        i = etape[0]
+
+        # Dessiner le segment de trajectoire jusqu'a maintenant
+        if i > 0:
+            x1a, y1a = to_screen(traj1[i-1][0], traj1[i-1][1])
+            x1b, y1b = to_screen(traj1[i][0], traj1[i][1])
+            canvas.create_line(x1a, y1a, x1b, y1b, fill="blue", width=2, dash=(4, 3))
+
+            x2a, y2a = to_screen(traj2[i-1][0], traj2[i-1][1])
+            x2b, y2b = to_screen(traj2[i][0], traj2[i][1])
+            canvas.create_line(x2a, y2a, x2b, y2b, fill="red", width=2, dash=(4, 3))
+
+        # Effacer les cercles des vehicules de l'etape precedente
+        canvas.delete("voiture")
+
+        # Dessiner les vehicules a leur position actuelle
+        sx1, sy1 = to_screen(traj1[i][0], traj1[i][1])
+        canvas.create_oval(sx1-12, sy1-12, sx1+12, sy1+12, fill="lightblue", outline="blue", width=2, tags="voiture")
+        canvas.create_text(sx1, sy1, text="V1", fill="blue", font=("Arial", 9, "bold"), tags="voiture")
+
+        sx2, sy2 = to_screen(traj2[i][0], traj2[i][1])
+        canvas.create_oval(sx2-12, sy2-12, sx2+12, sy2+12, fill="#ffcccc", outline="red", width=2, tags="voiture")
+        canvas.create_text(sx2, sy2, text="V2", fill="red", font=("Arial", 9, "bold"), tags="voiture")
+
+        etape[0] += 1
+
+        # Continuer l'animation ou terminer
+        if etape[0] < len(traj1):
+            animation_id = fenetre.after(50, animer)
+        else:
+            # Animation terminee - afficher resultats
+            if resultats_collision is not None:
+                tc, vf, F1, Ed, pcx_monde, pcy_monde = resultats_collision
+                pcx, pcy = to_screen(pcx_monde, pcy_monde)
+                canvas.create_oval(pcx-15, pcy-15, pcx+15, pcy+15, fill="yellow", outline="orange", width=2)
+                canvas.create_text(pcx, pcy, text="IMPACT", fill="orange", font=("Arial", 8, "bold"))
+                label_resultats.config(
+                    text=f"COLLISION DETECTEE\n"
+                         f"Temps: {tc:.2f} s  |  "
+                         f"Vitesse finale: {vf:.2f} m/s  |  "
+                         f"Force: {abs(F1):.1f} N  |  "
+                         f"Énergie dissipées: {Ed:.1f} J",
+                    fg="darkgreen"
+                )
+            else:
+                label_resultats.config(text="Aucune collision détectée dans 10 secondes.", fg="gray")
+
+    animer()
+
+# ==============================BOUTON==============================
+
+bouton = tk.Button(fenetre, text="Lancer la simulation", command=lancer_simulation,
+                   bg="white", font=("Arial", 11), padx=10, pady=5)
+bouton.grid(row=6, column=0, columnspan=4, pady=10)
+
+# ==============================LANCER==============================
+
+fenetre.mainloop()
