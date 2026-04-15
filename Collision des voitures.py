@@ -156,11 +156,12 @@ if collision:
     E_finale = 0.5 * (masse_voiture1 + masse_voiture2) * vitesse_finale**2
     E_dissipee = E_initiale - E_finale
 
+    # Affichage des résultats avec deux chiffres après la virgule
     print("\n===== COLLISION DETECTEE =====")
-    print("Temps de collision:", temps_collision, "s")
-    print("Vitesse finale:", vitesse_finale, "m/s")
-    print("Force:", abs(F1), "N")
-    print("Energie dissipée:", E_dissipee, "J")
+    print(f"Temps de collision: {temps_collision:.2f} s")
+    print(f"Vitesse résiduelle: {vitesse_finale:.2f} m/s")
+    print(f"Force subie par chacun des deux véhicules: {abs(F1):.2f} N")
+    print(f"Energie dissipée dans la collision: {E_dissipee:.2f} J")
 
 else:
     print("\nAucune collision détectée")
@@ -186,4 +187,4 @@ donnes_dict = {
 
 df = pd.DataFrame(donnes_dict, index=['Vehicule 1', 'Vehicule 2'])
 print("\nTableau récapitulatif:")
-print(df.round(2).to_string())f.round(2).to_string())round(2).to_string())
+print(df.round(2).to_string())
