@@ -1,3 +1,4 @@
+
 import pandas as pd
 import numpy as np
 
@@ -44,6 +45,9 @@ while True:
     except:
         print("ERREUR!")
 
+masse_passager1 = float(input("Masse du passager 1 (kg):"))
+ceinture1 = input("Passager 1 a une ceinture? (o/n):").strip().lower() == 'o'
+
 # ==============================Voiture2==============================
 
 while True:
@@ -86,6 +90,9 @@ while True:
             break
     except:
         print("ERREUR!")
+
+masse_passager2 = float(input("Masse du passager 2 (kg):"))
+ceinture2 = input("Passager 2 a une ceinture? (o/n):").strip().lower() == 'o'
 
 # ==============================MOUVEMENT==============================
 
@@ -162,6 +169,26 @@ if collision:
     print(f"Vitesse résiduelle: {vitesse_finale:.2f} m/s")
     print(f"Force subie par chacun des deux véhicules: {abs(F1):.2f} N")
     print(f"Energie dissipée dans la collision: {E_dissipee:.2f} J")
+
+    # ==============================IMPACT PASSAGERS==============================
+
+    # Force du passager = même force que le vehicule (proportionnelle a sa masse)
+    F_passager1 = abs(F1) * (masse_passager1 / masse_voiture1)
+    F_passager2 = abs(F2) * (masse_passager2 / masse_voiture2)
+
+    # Sans ceinture la force est plus grande 
+    if not ceinture1:
+        F_passager1 = F_passager1 * 2
+    if not ceinture2:
+        F_passager2 = F_passager2 * 2
+
+    print("\n===== IMPACT SUR LES PASSAGERS =====")
+    print(f"--- Passager 1 ---")
+    print(f"Ceinture: {'OUI' if ceinture1 else 'NON'}")
+    print(f"Force ressentie: {F_passager1:.2f} N")
+    print(f"--- Passager 2 ---")
+    print(f"Ceinture: {'OUI' if ceinture2 else 'NON'}")
+    print(f"Force ressentie: {F_passager2:.2f} N")
 
 else:
     print("\nAucune collision détectée")
