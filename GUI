@@ -113,15 +113,35 @@ btn_ceinture2 = tk.Button(fenetre, text="Ceinture P2: OUI", command=toggle_ceint
                            width=18, relief="raised", bd=2)
 btn_ceinture2.grid(row=7, column=2, columnspan=2, pady=5)
 
+# ==============================DISTANCE D'ARRÊT==============================
+
+frame_distance = tk.Frame(fenetre, bg="white", bd=1, relief="groove")
+frame_distance.grid(row=8, column=0, columnspan=4, padx=10, pady=5, sticky="ew")
+
+label_distance_titre = tk.Label(frame_distance, text="─── PARAMÈTRE DE COLLISION ───",
+                                  bg="white", fg="navy", font=("Arial", 10, "bold"))
+label_distance_titre.grid(row=0, column=0, columnspan=4, pady=(5, 2))
+
+tk.Label(frame_distance, text="Distance d'arrêt (m):", bg="white", font=("Arial", 10)).grid(
+    row=1, column=0, sticky="e", padx=10, pady=5)
+entree_distance = tk.Entry(frame_distance, width=10)
+entree_distance.insert(0, "1.0")
+entree_distance.grid(row=1, column=1, padx=5, pady=5, sticky="w")
+
+label_distance_info = tk.Label(frame_distance,
+    text="Formule: a = v² / (2d)   |   F = m × a",
+    bg="white", fg="gray", font=("Arial", 9, "italic"))
+label_distance_info.grid(row=1, column=2, columnspan=2, padx=10, pady=5)
+
 # ==============================GRAPHIQUE==============================
 
 canvas = tk.Canvas(fenetre, width=500, height=300, bg="white", bd=1, relief="solid")
-canvas.grid(row=9, column=0, columnspan=4, padx=10, pady=10)
+canvas.grid(row=10, column=0, columnspan=4, padx=10, pady=10)
 
 # ==============================RESULTATS (DEUX SECTIONS)==============================
 
 frame_resultats = tk.Frame(fenetre, bg="white")
-frame_resultats.grid(row=10, column=0, columnspan=4, padx=10, pady=5, sticky="ew")
+frame_resultats.grid(row=11, column=0, columnspan=4, padx=10, pady=5, sticky="ew")
 
 # Section collision voiture
 label_titre_collision = tk.Label(frame_resultats, text="─── RÉSULTATS DE LA COLLISION ───",
@@ -131,18 +151,26 @@ label_titre_collision.grid(row=0, column=0, columnspan=2, pady=(5, 2))
 label_collision = tk.Label(frame_resultats, text="\n", bg="white", font=("Arial", 10), justify="left", height=2)
 label_collision.grid(row=1, column=0, columnspan=2, padx=10)
 
+# Section sévérité
+label_titre_severite = tk.Label(frame_resultats, text="─── SÉVÉRITÉ DE LA COLLISION ───",
+                                  bg="white", fg="navy", font=("Arial", 10, "bold"))
+label_titre_severite.grid(row=2, column=0, columnspan=2, pady=(10, 2))
+
+label_severite = tk.Label(frame_resultats, text="\n", bg="white", font=("Arial", 10, "bold"), justify="center", height=2)
+label_severite.grid(row=3, column=0, columnspan=2, padx=10)
+
 # Section impact passagers
 label_titre_passagers = tk.Label(frame_resultats, text="─── IMPACT SUR LES PASSAGERS ───",
                                    bg="white", fg="darkred", font=("Arial", 10, "bold"))
-label_titre_passagers.grid(row=2, column=0, columnspan=2, pady=(10, 2))
+label_titre_passagers.grid(row=4, column=0, columnspan=2, pady=(10, 2))
 
 label_passagers = tk.Label(frame_resultats, text="\n", bg="white", font=("Arial", 10), justify="left", height=2)
-label_passagers.grid(row=3, column=0, columnspan=2, padx=10)
+label_passagers.grid(row=5, column=0, columnspan=2, padx=10)
 
 # ==============================VARIABLE D'ANIMATION==============================
 
 animation_id = None
-derniers_resultats_collision = None  # Pour recalculer les forces passagers si on change le switch en live
+derniers_resultats_collision = None
 
 # ==============================FONCTIONS==============================
 
@@ -156,28 +184,61 @@ def dessiner_axes():
     canvas.create_line(10, oy, 490, oy, fill="lightgray")
     canvas.create_line(ox, 10, ox, 290, fill="lightgray")
 
-def calculer_et_afficher_passagers(F1, F2, masse_passager1, masse_passager2):
-    """Recalcule et affiche la section passagers selon l'état des ceintures."""
+def get_severite(force_max):
+    """
+    Retourne (texte_severite, couleur, est_fatal) selon la force max ressentie.
+    Seuils :
+      < 75 000 N       → peu sévère (vert)
+      >= 75 000 N et < 168 750 N → modérément sévère (jaune) [entre les deux seuils]
+      >= 168 750 N et < 396 750 N → modérément sévère: risque blessure (jaune)
+      >= 396 750 N     → très sévère (rouge, fatale)
+    """
+    if force_max < 75000:
+        texte = "✅ COLLISION PEU SÉVÈRE — Non fatale\nAucun risque majeur de blessure."
+        couleur = "green"
+        fatal = False
+    elif force_max < 168750:
+        texte = "🟡 COLLISION MODÉRÉMENT SÉVÈRE — Non fatale\nRisque possible de blessures légères."
+        couleur = "#b8860b"
+        fatal = False
+    elif force_max < 396750:
+        texte = "⚠️ COLLISION MODÉRÉMENT SÉVÈRE — Potentiellement fatale\nRisque possible de blessure — Coussins gonflables requis!"
+        couleur = "orange"
+        fatal = True
+    else:
+        texte = "🔴 COLLISION TRÈS SÉVÈRE — Fatale\nBlessures sévères probables sans ceinture de sécurité!"
+        couleur = "red"
+        fatal = True
+    return texte, couleur, fatal
+
+def calculer_et_afficher_passagers(vitesse1, vitesse2, masse_passager1, masse_passager2, distance_arret):
+    """Recalcule et affiche la section passagers selon l'état des ceintures et la distance d'arrêt."""
     ceinture1 = ceinture1_var.get()
     ceinture2 = ceinture2_var.get()
 
-    F_passager1 = abs(F1) * (masse_passager1 / max(abs(F1), 1))
-    F_passager2 = abs(F2) * (masse_passager2 / max(abs(F2), 1))
+    # Formule physique correcte : a = v² / (2d), F = m * a
+    a1 = (vitesse1 ** 2) / (2 * distance_arret) if distance_arret > 0 else 0
+    a2 = (vitesse2 ** 2) / (2 * distance_arret) if distance_arret > 0 else 0
 
-    # On recalcule proprement depuis la force brute stockée
-    F_passager1 = abs(F1) * masse_passager1
-    F_passager2 = abs(F2) * masse_passager2
+    F_passager1 = masse_passager1 * a1
+    F_passager2 = masse_passager2 * a2
 
+    # Sans ceinture : force doublée (déplacement corps dans habitacle)
     if not ceinture1:
         F_passager1 *= 2
     if not ceinture2:
         F_passager2 *= 2
 
     texte_passagers = (
-        f"Passager 1 — Ceinture: {'OUI ✓' if ceinture1 else 'NON ✗'}  |  Force ressentie: {F_passager1:.1f} N\n"
-        f"Passager 2 — Ceinture: {'OUI ✓' if ceinture2 else 'NON ✗'}  |  Force ressentie: {F_passager2:.1f} N"
+        f"Passager 1 — Ceinture: {'OUI ✓' if ceinture1 else 'NON ✗'}  |  Décélération: {a1:.1f} m/s²  |  Force ressentie: {F_passager1:.1f} N\n"
+        f"Passager 2 — Ceinture: {'OUI ✓' if ceinture2 else 'NON ✗'}  |  Décélération: {a2:.1f} m/s²  |  Force ressentie: {F_passager2:.1f} N"
     )
     label_passagers.config(text=texte_passagers, fg="darkred")
+
+    # Sévérité basée sur la force maximale ressentie parmi les deux passagers
+    force_max = max(F_passager1, F_passager2)
+    texte_sev, couleur_sev, fatal = get_severite(force_max)
+    label_severite.config(text=texte_sev, fg=couleur_sev)
 
 def lancer_simulation():
     global animation_id, derniers_resultats_collision
@@ -277,7 +338,16 @@ def lancer_simulation():
         messagebox.showerror("Erreur", "Masse du passager 2 invalide!")
         return
 
-    # ==============================MOUVEMENT==============================
+    try:
+        distance_arret = float(entree_distance.get())
+        if distance_arret <= 0:
+            messagebox.showerror("Erreur", "La distance d'arrêt doit être supérieure à 0!")
+            return
+    except ValueError:
+        messagebox.showerror("Erreur", "Distance d'arrêt invalide!")
+        return
+
+    # ==============================MOUVEMENT (TEMPS RÉEL, INFINI)==============================
 
     angle1_rad = np.radians(angle_1)
     angle2_rad = np.radians(angle_2)
@@ -287,160 +357,137 @@ def lancer_simulation():
     vx2 = vitesse_initiale2 * np.cos(angle2_rad)
     vy2 = vitesse_initiale2 * np.sin(angle2_rad)
 
-    dt = 0.01
-    temps = 0
-    temps_max = 10
-    collision = False
-    temps_collision = 0
-    cx1, cy1 = position_x_1, position_y_1
+    # État mutable de la simulation (listes pour pouvoir modifier dans la closure)
+    state = {
+        "temps": 0.0,
+        "x1": position_x_1, "y1": position_y_1,
+        "x2": position_x_2, "y2": position_y_2,
+        "prev_x1": position_x_1, "prev_y1": position_y_1,
+        "prev_x2": position_x_2, "prev_y2": position_y_2,
+    }
 
-    traj1 = [(position_x_1, position_y_1)]
-    traj2 = [(position_x_2, position_y_2)]
-
-    resultats_collision = None
-
-    while temps < temps_max:
-        x1 = position_x_1 + vx1 * temps
-        y1 = position_y_1 + vy1 * temps
-        x2 = position_x_2 + vx2 * temps
-        y2 = position_y_2 + vy2 * temps
-
-        if round(temps * 100) % 6 == 0:
-            traj1.append((x1, y1))
-            traj2.append((x2, y2))
-
-        distance = np.sqrt((x1 - x2)**2 + (y1 - y2)**2)
-
-        if distance < 1.2:
-            collision = True
-            temps_collision = temps
-            cx1, cy1 = x1, y1
-            break
-        temps += dt
-
-    if collision:
-        px_total = (masse_voiture1 * vx1) + (masse_voiture2 * vx2)
-        py_total = (masse_voiture1 * vy1) + (masse_voiture2 * vy2)
-        masse_totale = masse_voiture1 + masse_voiture2
-
-        vfx = px_total / masse_totale
-        vfy = py_total / masse_totale
-        vitesse_finale_norme = np.sqrt(vfx**2 + vfy**2)
-
-        delta_v1 = vitesse_finale_norme - vitesse_initiale1
-        delta_v2 = vitesse_finale_norme - vitesse_initiale2
-        temps_collision_physique = 0.1
-
-        F1 = masse_voiture1 * (delta_v1 / temps_collision_physique)
-        F2 = masse_voiture2 * (delta_v2 / temps_collision_physique)
-
-        E_initiale = (0.5 * masse_voiture1 * vitesse_initiale1**2) + (0.5 * masse_voiture2 * vitesse_initiale2**2)
-        E_finale = 0.5 * masse_totale * vitesse_finale_norme**2
-        E_dissipee = E_initiale - E_finale
-
-        # Accélération normalisée pour la force passager (a = F/m_voiture => F_passager = m_passager * a)
-        a1 = abs(delta_v1) / temps_collision_physique
-        a2 = abs(delta_v2) / temps_collision_physique
-        F_passager1_base = masse_passager1 * a1
-        F_passager2_base = masse_passager2 * a2
-
-        resultats_collision = (temps_collision, vitesse_finale_norme, F1, F2, E_dissipee, cx1, cy1, vfx, vfy,
-                               F_passager1_base, F_passager2_base, masse_passager1, masse_passager2)
+    # Pas de temps par frame d'animation (50ms = 0.05s réel → on avance dt en physique)
+    dt = 0.05
 
     canvas.delete("all")
-    label_collision.config(text="Animation en cours...", fg="gray")
+    label_collision.config(text="Simulation en cours...", fg="gray")
     label_passagers.config(text="")
+    label_severite.config(text="")
     dessiner_axes()
-
-    etape = [0]
 
     def animer():
         global animation_id, derniers_resultats_collision
-        i = etape[0]
 
-        if i > 0:
-            x1a, y1a = to_screen(traj1[i-1][0], traj1[i-1][1])
-            x1b, y1b = to_screen(traj1[i][0], traj1[i][1])
-            canvas.create_line(x1a, y1a, x1b, y1b, fill="blue", width=2, dash=(4, 3))
+        s = state
+        s["prev_x1"], s["prev_y1"] = s["x1"], s["y1"]
+        s["prev_x2"], s["prev_y2"] = s["x2"], s["y2"]
 
-            x2a, y2a = to_screen(traj2[i-1][0], traj2[i-1][1])
-            x2b, y2b = to_screen(traj2[i][0], traj2[i][1])
-            canvas.create_line(x2a, y2a, x2b, y2b, fill="red", width=2, dash=(4, 3))
+        s["x1"] += vx1 * dt
+        s["y1"] += vy1 * dt
+        s["x2"] += vx2 * dt
+        s["y2"] += vy2 * dt
+        s["temps"] += dt
 
+        # Dessiner le segment de trajectoire parcouru ce frame
+        x1a, y1a = to_screen(s["prev_x1"], s["prev_y1"])
+        x1b, y1b = to_screen(s["x1"], s["y1"])
+        canvas.create_line(x1a, y1a, x1b, y1b, fill="blue", width=2, dash=(4, 3))
+
+        x2a, y2a = to_screen(s["prev_x2"], s["prev_y2"])
+        x2b, y2b = to_screen(s["x2"], s["y2"])
+        canvas.create_line(x2a, y2a, x2b, y2b, fill="red", width=2, dash=(4, 3))
+
+        # Dessiner les voitures à leur position actuelle
         canvas.delete("voiture")
-        sx1, sy1 = to_screen(traj1[i][0], traj1[i][1])
+        sx1, sy1 = to_screen(s["x1"], s["y1"])
         canvas.create_oval(sx1-12, sy1-12, sx1+12, sy1+12, fill="lightblue", outline="blue", width=2, tags="voiture")
-        sx2, sy2 = to_screen(traj2[i][0], traj2[i][1])
+        sx2, sy2 = to_screen(s["x2"], s["y2"])
         canvas.create_oval(sx2-12, sy2-12, sx2+12, sy2+12, fill="#ffcccc", outline="red", width=2, tags="voiture")
 
-        etape[0] += 1
+        # Vérifier la collision
+        distance = np.sqrt((s["x1"] - s["x2"])**2 + (s["y1"] - s["y2"])**2)
 
-        if etape[0] < len(traj1):
-            animation_id = fenetre.after(50, animer)
+        if distance < 1.2:
+            # ======== COLLISION DÉTECTÉE ========
+            tc = s["temps"]
+            px_total = (masse_voiture1 * vx1) + (masse_voiture2 * vx2)
+            py_total = (masse_voiture1 * vy1) + (masse_voiture2 * vy2)
+            masse_totale = masse_voiture1 + masse_voiture2
+
+            vfx = px_total / masse_totale
+            vfy = py_total / masse_totale
+            vitesse_finale_norme = np.sqrt(vfx**2 + vfy**2)
+
+            E_initiale = (0.5 * masse_voiture1 * vitesse_initiale1**2) + (0.5 * masse_voiture2 * vitesse_initiale2**2)
+            E_finale = 0.5 * masse_totale * vitesse_finale_norme**2
+            E_dissipee = E_initiale - E_finale
+
+            delta_v1 = vitesse_finale_norme - vitesse_initiale1
+            delta_v2 = vitesse_finale_norme - vitesse_initiale2
+            temps_collision_physique = 0.1
+            F1 = masse_voiture1 * (delta_v1 / temps_collision_physique)
+            F2 = masse_voiture2 * (delta_v2 / temps_collision_physique)
+
+            derniers_resultats_collision = (tc, vitesse_finale_norme, F1, F2, E_dissipee,
+                                            s["x1"], s["y1"], vfx, vfy,
+                                            vitesse_initiale1, vitesse_initiale2,
+                                            masse_passager1, masse_passager2,
+                                            distance_arret)
+
+            pcx, pcy = to_screen(s["x1"], s["y1"])
+
+            if vitesse_finale_norme > 0.1:
+                end_x_m = s["x1"] + (vfx / vitesse_finale_norme) * 8
+                end_y_m = s["y1"] + (vfy / vitesse_finale_norme) * 8
+                pe_x, pe_y = to_screen(end_x_m, end_y_m)
+                canvas.create_line(pcx, pcy, pe_x, pe_y, fill="black", width=3, arrow=tk.LAST)
+                canvas.create_text(pe_x, pe_y+15, text="Vecteur de sortie", fill="black", font=("Arial", 8, "italic"))
+
+            canvas.create_oval(pcx-15, pcy-15, pcx+15, pcy+15, fill="yellow", outline="orange", width=2)
+            canvas.create_text(pcx, pcy, text="IMPACT", fill="orange", font=("Arial", 8, "bold"))
+
+            label_collision.config(
+                text=f"Temps de collision: {tc:.2f} s  |  Vitesse finale: {vitesse_finale_norme:.2f} m/s  |  Angle: {np.degrees(np.arctan2(vfy, vfx)):.1f}°\n"
+                     f"Force impact (V1): {abs(F1):.1f} N  |  Force impact (V2): {abs(F2):.1f} N  |  Énergie perdue: {E_dissipee:.1f} J",
+                fg="darkgreen"
+            )
+            calculer_et_afficher_passagers(vitesse_initiale1, vitesse_initiale2, masse_passager1, masse_passager2, distance_arret)
+            # Simulation arrêtée — on ne replanifie pas animer()
+            animation_id = None
+
         else:
-            if resultats_collision is not None:
-                tc, vf, f1_val, f2_val, ed, pcx_m, pcy_m, vfx, vfy, fp1_base, fp2_base, mp1, mp2 = resultats_collision
-                derniers_resultats_collision = resultats_collision
-
-                pcx, pcy = to_screen(pcx_m, pcy_m)
-
-                if vf > 0.1:
-                    end_x_m = pcx_m + (vfx / vf) * 8
-                    end_y_m = pcy_m + (vfy / vf) * 8
-                    pe_x, pe_y = to_screen(end_x_m, end_y_m)
-                    canvas.create_line(pcx, pcy, pe_x, pe_y, fill="black", width=3, arrow=tk.LAST)
-                    canvas.create_text(pe_x, pe_y+15, text="Vecteur de sortie", fill="black", font=("Arial", 8, "italic"))
-
-                canvas.create_oval(pcx-15, pcy-15, pcx+15, pcy+15, fill="yellow", outline="orange", width=2)
-                canvas.create_text(pcx, pcy, text="IMPACT", fill="orange", font=("Arial", 8, "bold"))
-
-                # Section collision voiture
-                label_collision.config(
-                    text=f"Temps de collision: {tc:.2f} s  |  Vitesse finale: {vf:.2f} m/s  |  Angle: {np.degrees(np.arctan2(vfy, vfx)):.1f}°\n"
-                         f"Force impact (V1): {abs(f1_val):.1f} N  |  Force impact (V2): {abs(f2_val):.1f} N  |  Énergie perdue: {ed:.1f} J",
-                    fg="darkgreen"
-                )
-
-                # Section passagers
-                calculer_et_afficher_passagers(fp1_base, fp2_base, mp1, mp2)
-
-            else:
-                derniers_resultats_collision = None
-                label_collision.config(text="Aucune collision détectée.", fg="gray")
-                label_passagers.config(text="")
+            # Pas encore de collision → continuer indéfiniment
+            animation_id = fenetre.after(50, animer)
 
     animer()
 
 # ==============================SWITCH EN TEMPS RÉEL==============================
 
 def on_ceinture_toggle(numero):
-    """Appelé quand on clique sur un switch ceinture : recalcule les passagers si une simulation est déjà faite."""
     if numero == 1:
         toggle_ceinture1()
     else:
         toggle_ceinture2()
 
     if derniers_resultats_collision is not None:
-        tc, vf, f1_val, f2_val, ed, pcx_m, pcy_m, vfx, vfy, fp1_base, fp2_base, mp1, mp2 = derniers_resultats_collision
-        calculer_et_afficher_passagers(fp1_base, fp2_base, mp1, mp2)
+        (tc, vf, f1_val, f2_val, ed, pcx_m, pcy_m, vfx, vfy,
+         vi1, vi2, mp1, mp2, d_arret) = derniers_resultats_collision
+        calculer_et_afficher_passagers(vi1, vi2, mp1, mp2, d_arret)
 
-# On relie les boutons ceinture à la fonction qui met à jour en live
 btn_ceinture1.config(command=lambda: on_ceinture_toggle(1))
 btn_ceinture2.config(command=lambda: on_ceinture_toggle(2))
 
-# ==============================BOUTON SIMULATION==============================
+# ==============================BOUTONS SIMULATION==============================
 
 bouton = tk.Button(fenetre, text="Lancer la simulation", command=lancer_simulation,
                    bg="white", font=("Arial", 11), padx=10, pady=5)
-bouton.grid(row=8, column=0, columnspan=2, pady=10)
+bouton.grid(row=9, column=0, columnspan=2, pady=10)
 
-# Verrouiller la taille de la fenetre apres avoir place tous les widgets
 fenetre.update_idletasks()
 w = max(fenetre.winfo_reqwidth(), 800)
 h = max(fenetre.winfo_reqheight(), 900)
 fenetre.geometry(f"{w}x{h}")
 
-#arreter la simulation
 def arreter_simulation():
     global animation_id
     if animation_id is not None:
@@ -450,6 +497,6 @@ def arreter_simulation():
 
 bouton_stop = tk.Button(fenetre, text="Arrêter la simulation", command=arreter_simulation,
                         bg="#ffe6e6", fg="red", font=("Arial", 11), padx=10, pady=5)
-bouton_stop.grid(row=8, column=2, columnspan=4, pady=5)
+bouton_stop.grid(row=9, column=2, columnspan=4, pady=5)
 
 fenetre.mainloop()
