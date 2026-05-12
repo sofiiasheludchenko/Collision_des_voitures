@@ -191,7 +191,7 @@ def get_severite(g_max):
         texte = "COLLISION GRAVE — Blessures graves probables\nIntervention médicale urgente requise!"
         couleur = "orange"
     else:
-        texte = "COLLISION MORTELLE — Survie peu probable\nPassagers morts!"
+        texte = "COLLISION MORTELLE — Blessures mortelles\nPassagers morts!"
         couleur = "red"
     return texte, couleur
 
@@ -420,7 +420,7 @@ def lancer_simulation():
 
         distance = math.sqrt((pos_x1 - pos_x2) ** 2 + (pos_y1 - pos_y2) ** 2)
 
-        if distance < 0.1:
+        if distance < 1:
             vfx = (m1 * vx1 + m2 * vx2) / (m1 + m2)
             vfy = (m1 * vy1 + m2 * vy2) / (m1 + m2)
             vf = math.sqrt(vfx ** 2 + vfy ** 2)
