@@ -237,7 +237,7 @@ def afficher_passagers(delta_v1, delta_v2, mp1, mp2, d1, d2):
         elif g < 80:
             return "🔴 POTENTIELLEMENT FATALE — Blessures graves"
         else:
-            return "💀 FATALE — Force létale dépassée"
+            return "💀 FATALE — Le passager est mort"
 
     diag1 = diagnostic_fatal(g1)
     diag2 = diagnostic_fatal(g2)
