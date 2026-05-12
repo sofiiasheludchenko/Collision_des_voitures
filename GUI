@@ -420,7 +420,7 @@ def lancer_simulation():
 
         distance = math.sqrt((pos_x1 - pos_x2) ** 2 + (pos_y1 - pos_y2) ** 2)
 
-        if distance < 1.2:
+        if distance < 0.01:
             vfx = (m1 * vx1 + m2 * vx2) / (m1 + m2)
             vfy = (m1 * vy1 + m2 * vy2) / (m1 + m2)
             vf = math.sqrt(vfx ** 2 + vfy ** 2)
@@ -547,3 +547,9 @@ h = max(fenetre.winfo_reqheight(), 900)
 fenetre.geometry(f"{w}x{h}")
 
 fenetre.mainloop()
+
+# ==============================FORMULES==============================
+#d (v^2)/2a
+#Vf = (m1*v1 + m2*v2)/(m1 + m2
+#deceleration = v^2/2d
+#f = ma
