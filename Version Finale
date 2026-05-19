@@ -347,7 +347,7 @@ def afficher_info_g():
         info_text = (
             "20 À 40 G — Blessures modérées à graves\n"
             "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
-            "  • ~28 g  → Attaque éclair d'un serpent à sonnette\n"
+            "  • ~28 g  → Attaque d'un serpent à sonnette\n"
             "  • ~30 g  → Impact d'un punch d'un boxeur professionnel\n"
             "  • ~35 g  → Collision automobile à basse vitesse\n"
         )
