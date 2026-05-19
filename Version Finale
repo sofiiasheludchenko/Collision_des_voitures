@@ -325,7 +325,7 @@ def afficher_info_g():
         )
     elif g_max_actuel < 5:
         info_text = (
-            "🟢  MOINS DE 5 G — Aucun risque majeur\n"
+            "MOINS DE 5 G — Aucun risque majeur\n"
             "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
             "  • 1 g    → Gravité normale sur Terre (debout immobile)\n"
             "  • ~2 g   → Un éternuement (~2.9 g)\n"
@@ -335,17 +335,17 @@ def afficher_info_g():
         )
     elif g_max_actuel < 20:
         info_text = (
-            "🟡  5 À 20 G — Blessures mineures possibles\n"
+            "5 À 20 G — Blessures mineures possibles\n"
             "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
             "  • ~6 g   → Ouverture d'un parachute\n"
             "  • ~8 g   → Accélération d'un dragster Top Fuel\n"
             "  • ~9 g   → Pilote de chasse en virage serré\n"
             "  • ~10 g  → S'asseoir brusquement sur une chaise\n"
-            "  ⚠️  Une personne non entraînée perd conscience vers 4–6 g\n"
+            "  Le saviez vous? Une personne non entraînée perd conscience vers 4–6 g\n"
         )
     elif g_max_actuel < 40:
         info_text = (
-            "🟠  20 À 40 G — Blessures modérées à graves\n"
+            "20 À 40 G — Blessures modérées à graves\n"
             "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
             "  • ~28 g  → Attaque éclair d'un serpent à sonnette\n"
             "  • ~30 g  → Impact d'un punch d'un boxeur professionnel\n"
@@ -353,7 +353,7 @@ def afficher_info_g():
         )
     elif g_max_actuel < 80:
         info_text = (
-            "🔴  40 À 80 G — Blessures graves, potentiellement fatales\n"
+            "40 À 80 G — Blessures graves, potentiellement fatales\n"
             "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
             "  • ~41 g  → Un sauterelle qui saute\n"
             "  • ~51 g  → Impact direct sur une balle de tennis\n"
@@ -361,7 +361,7 @@ def afficher_info_g():
         )
     else:
         info_text = (
-            "💀  80 G ET PLUS — Généralement fatal\n"
+            "80 G ET PLUS — Généralement fatal\n"
             "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
             "  • ~100 g → Voiture frappant un mur à 112 km/h\n"
             "  • 100+ g → Dommages aux organes internes quasi certains\n"
@@ -371,7 +371,7 @@ def afficher_info_g():
     if g_max_actuel > 0:
         info_text += (
             "\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
-            "ℹ️  NOTE IMPORTANTE\n"
+            "NOTE IMPORTANTE\n"
             "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
             "  La durée d'exposition est aussi importante que la valeur !\n"
             "  Un choc bref de 10 g est supportable, mais 6 g pendant\n"
@@ -494,15 +494,15 @@ def afficher_passagers(delta_v1, delta_v2, mp1, mp2, d1, d2, m1=1, m2=1, F1_v=0,
 
     def diagnostic_fatal(g):
         if g < 5:
-            return "✅ NON FATALE — Aucun risque majeur"
+            return "NON FATALE — Aucun risque majeur"
         elif g < 20:
-            return "⚠️ NON FATALE — Blessures mineures possibles"
+            return "NON FATALE — Blessures mineures possibles"
         elif g < 40:
-            return "🟠 NON FATALE — Blessures modérées probables"
+            return "NON FATALE — Blessures modérées probables"
         elif g < 80:
-            return "🔴 POTENTIELLEMENT FATALE — Blessures graves"
+            return "POTENTIELLEMENT FATALE — Blessures graves"
         else:
-            return "💀 FATALE — Le passager est mort"
+            return "FATALE — Le passager est mort"
 
     diag1 = diagnostic_fatal(g1)
     diag2 = diagnostic_fatal(g2)
