@@ -9,18 +9,147 @@ fenetre.title("Simulation de collision")
 fenetre.configure(bg="white")
 fenetre.resizable(False, False)
 
+
+# ==============================FONCTIONS DE SCÉNARIOS==============================
+
+def vider_champs():
+    """Vide toutes les cases avant d'écrire les nouvelles valeurs."""
+    for entree in [entree_m1, entree_v1, entree_x1, entree_y1, entree_a1, entree_mp1, entree_distance1,
+                   entree_m2, entree_v2, entree_x2, entree_y2, entree_a2, entree_mp2, entree_distance2]:
+        entree.delete(0, tk.END)
+
+
+def scenario_face_a_face():
+    vider_champs()
+    entree_m1.insert(0, "1400")
+    entree_v1.insert(0, "14")
+    entree_x1.insert(0, "-15")
+    entree_y1.insert(0, "0")
+    entree_a1.insert(0, "0")
+    entree_mp1.insert(0, "75")
+    entree_distance1.insert(0, "0.5")
+
+    entree_m2.insert(0, "1800")
+    entree_v2.insert(0, "14")
+    entree_x2.insert(0, "15")
+    entree_y2.insert(0, "0")
+    entree_a2.insert(0, "180")
+    entree_mp2.insert(0, "70")
+    entree_distance2.insert(0, "0.4")
+
+    update_kmh1()
+    update_kmh2()
+
+
+def scenario_lateral():
+    vider_champs()
+    entree_m1.insert(0, "1300")
+    entree_v1.insert(0, "14")
+    entree_x1.insert(0, "-15")
+    entree_y1.insert(0, "0")
+    entree_a1.insert(0, "0")
+    entree_mp1.insert(0, "80")
+    entree_distance1.insert(0, "0.5")
+
+    entree_m2.insert(0, "1200")
+    entree_v2.insert(0, "-10")
+    entree_x2.insert(0, "0")
+    entree_y2.insert(0, "10")
+    entree_a2.insert(0, "90")
+    entree_mp2.insert(0, "65")
+    entree_distance2.insert(0, "0.2")
+
+    update_kmh1()
+    update_kmh2()
+
+
+def scenario_angle():
+    vider_champs()
+    entree_m1.insert(0, "1500")
+    entree_v1.insert(0, "16")
+    entree_x1.insert(0, "-12")
+    entree_y1.insert(0, "-12")
+    entree_a1.insert(0, "45")
+    entree_mp1.insert(0, "85")
+    entree_distance1.insert(0, "0.4")
+
+    entree_m2.insert(0, "1500")
+    entree_v2.insert(0, "15")
+    entree_x2.insert(0, "-12")
+    entree_y2.insert(0, "12")
+    entree_a2.insert(0, "315")
+    entree_mp2.insert(0, "75")
+    entree_distance2.insert(0, "0.4")
+
+    update_kmh1()
+    update_kmh2()
+
+
+def scenario_aucune():
+    vider_champs()
+    entree_m1.insert(0, "1400")
+    entree_v1.insert(0, "15")
+    entree_x1.insert(0, "-18")
+    entree_y1.insert(0, "5")
+    entree_a1.insert(0, "0")
+    entree_mp1.insert(0, "70")
+    entree_distance1.insert(0, "0.5")
+
+    entree_m2.insert(0, "1400")
+    entree_v2.insert(0, "15")
+    entree_x2.insert(0, "18")
+    entree_y2.insert(0, "-5")
+    entree_a2.insert(0, "180")
+    entree_mp2.insert(0, "70")
+    entree_distance2.insert(0, "0.5")
+
+    update_kmh1()
+    update_kmh2()
+
+
+#fonction pour scenario personnalise
+def scenario_custom():
+    vider_champs()
+    label_kmh1.config(text="")
+    label_kmh2.config(text="")
+    # Efface aussi les anciens dessins sur le graphique
+    canvas.delete("all")
+    dessiner_fond()
+
+
+# ==============================BARRE DE SÉLECTION DE SCÉNARIOS==============================
+
+frame_scenarios = tk.LabelFrame(fenetre, text=" CHOISIR UN SCÉNARIO CONFIGURÉ ", bg="white", fg="navy",
+                                font=("Arial", 10, "bold"))
+frame_scenarios.grid(row=0, column=0, columnspan=4, padx=10, pady=10, sticky="ew")
+
+btn_sc1 = tk.Button(frame_scenarios, text="1. Face-à-face", command=scenario_face_a_face, bg="#f0f4f8")
+btn_sc1.pack(side="left", expand=True, fill="x", padx=3, pady=5)
+
+btn_sc2 = tk.Button(frame_scenarios, text="2. En angle (90°)", command=scenario_lateral, bg="#f0f4f8")
+btn_sc2.pack(side="left", expand=True, fill="x", padx=3, pady=5)
+
+btn_sc3 = tk.Button(frame_scenarios, text="3. En Angle", command=scenario_angle, bg="#f0f4f8")
+btn_sc3.pack(side="left", expand=True, fill="x", padx=3, pady=5)
+
+btn_sc4 = tk.Button(frame_scenarios, text="4. Aucune", command=scenario_aucune, bg="#f0f4f8")
+btn_sc4.pack(side="left", expand=True, fill="x", padx=3, pady=5)
+
+btn_sc5 = tk.Button(frame_scenarios, text="5. Personnalié (Vide)", command=scenario_custom, bg="#fff2cc")
+btn_sc5.pack(side="left", expand=True, fill="x", padx=3, pady=5)
+
 # ==============================VOITURE 1==============================
 
 label_v1 = tk.Label(fenetre, text="VÉHICULE 1", bg="white", fg="blue", font=("Arial", 12, "bold"))
-label_v1.grid(row=0, column=0, columnspan=2, pady=5)
+label_v1.grid(row=1, column=0, columnspan=2, pady=5)
 
-tk.Label(fenetre, text="Masse (kg):", bg="white").grid(row=1, column=0, sticky="e", padx=5)
+tk.Label(fenetre, text="Masse (kg):", bg="white").grid(row=2, column=0, sticky="e", padx=5)
 entree_m1 = tk.Entry(fenetre)
-entree_m1.grid(row=1, column=1, padx=5, pady=2)
+entree_m1.grid(row=2, column=1, padx=5, pady=2)
 
-tk.Label(fenetre, text="Vitesse initiale (m/s):", bg="white").grid(row=2, column=0, sticky="e", padx=5)
+tk.Label(fenetre, text="Vitesse initiale (m/s):", bg="white").grid(row=3, column=0, sticky="e", padx=5)
 frame_vitesse1 = tk.Frame(fenetre, bg="white")
-frame_vitesse1.grid(row=2, column=1, padx=5, pady=2, sticky="w")
+frame_vitesse1.grid(row=3, column=1, padx=5, pady=2, sticky="w")
 
 vitesse1_var = tk.StringVar()
 entree_v1 = tk.Entry(frame_vitesse1, textvariable=vitesse1_var, width=8)
@@ -29,7 +158,7 @@ entree_v1.pack(side="left")
 label_kmh1 = tk.Label(frame_vitesse1, text="", bg="white", fg="gray", font=("Arial", 9))
 label_kmh1.pack(side="left", padx=3)
 
-#Calcul pour convertir les (m/s) en (km/h)
+
 def update_kmh1(*args):
     try:
         ms = float(vitesse1_var.get())
@@ -38,31 +167,33 @@ def update_kmh1(*args):
     except ValueError:
         label_kmh1.config(text="")
 
+
 vitesse1_var.trace("w", update_kmh1)
 
-tk.Label(fenetre, text="Position X (-20 à 20):", bg="white").grid(row=3, column=0, sticky="e", padx=5)
+tk.Label(fenetre, text="Position X (-20 à 20):", bg="white").grid(row=4, column=0, sticky="e", padx=5)
 entree_x1 = tk.Entry(fenetre)
-entree_x1.grid(row=3, column=1, padx=5, pady=2)
+entree_x1.grid(row=4, column=1, padx=5, pady=2)
 
-tk.Label(fenetre, text="Position Y (-20 à 20):", bg="white").grid(row=4, column=0, sticky="e", padx=5)
+tk.Label(fenetre, text="Position Y (-20 à 20):", bg="white").grid(row=5, column=0, sticky="e", padx=5)
 entree_y1 = tk.Entry(fenetre)
-entree_y1.grid(row=4, column=1, padx=5, pady=2)
+entree_y1.grid(row=5, column=1, padx=5, pady=2)
 
-tk.Label(fenetre, text="Angle (0° à 360°):", bg="white").grid(row=5, column=0, sticky="e", padx=5)
+tk.Label(fenetre, text="Angle (0° à 360°):", bg="white").grid(row=6, column=0, sticky="e", padx=5)
 entree_a1 = tk.Entry(fenetre)
-entree_a1.grid(row=5, column=1, padx=5, pady=2)
+entree_a1.grid(row=6, column=1, padx=5, pady=2)
 
-tk.Label(fenetre, text="Masse passager 1 (kg):", bg="white").grid(row=6, column=0, sticky="e", padx=5)
+tk.Label(fenetre, text="Masse passager 1 (kg):", bg="white").grid(row=7, column=0, sticky="e", padx=5)
 entree_mp1 = tk.Entry(fenetre)
-entree_mp1.grid(row=6, column=1, padx=5, pady=2)
+entree_mp1.grid(row=7, column=1, padx=5, pady=2)
 
-tk.Label(fenetre, text="Distance d'arrêt (m):", bg="white").grid(row=7, column=0, sticky="e", padx=5)
+tk.Label(fenetre, text="Distance d'arrêt (m):", bg="white").grid(row=8, column=0, sticky="e", padx=5)
 entree_distance1 = tk.Entry(fenetre)
-entree_distance1.grid(row=7, column=1, padx=5, pady=2)
+entree_distance1.grid(row=8, column=1, padx=5, pady=2)
 
 # ==============================CEINTURE 1==============================
 
 ceinture1_var = tk.BooleanVar(value=True)
+
 
 def toggle_ceinture1():
     if ceinture1_var.get():
@@ -72,23 +203,24 @@ def toggle_ceinture1():
         ceinture1_var.set(True)
         btn_ceinture1.config(text="Ceinture P1: OUI", bg="#ccffcc", fg="green")
 
+
 btn_ceinture1 = tk.Button(fenetre, text="Ceinture P1: OUI", command=toggle_ceinture1,
-                           bg="#ccffcc", fg="green", font=("Arial", 10, "bold"),
-                           width=18, relief="raised", bd=2)
-btn_ceinture1.grid(row=8, column=0, columnspan=2, pady=5)
+                          bg="#ccffcc", fg="green", font=("Arial", 10, "bold"),
+                          width=18, relief="raised", bd=2)
+btn_ceinture1.grid(row=9, column=0, columnspan=2, pady=5)
 
 # ==============================VOITURE 2==============================
 
 label_v2 = tk.Label(fenetre, text="VÉHICULE 2", bg="white", fg="red", font=("Arial", 12, "bold"))
-label_v2.grid(row=0, column=2, columnspan=2, pady=5)
+label_v2.grid(row=1, column=2, columnspan=2, pady=5)
 
-tk.Label(fenetre, text="Masse (kg):", bg="white").grid(row=1, column=2, sticky="e", padx=5)
+tk.Label(fenetre, text="Masse (kg):", bg="white").grid(row=2, column=2, sticky="e", padx=5)
 entree_m2 = tk.Entry(fenetre)
-entree_m2.grid(row=1, column=3, padx=5, pady=2)
+entree_m2.grid(row=2, column=3, padx=5, pady=2)
 
-tk.Label(fenetre, text="Vitesse initiale (m/s):", bg="white").grid(row=2, column=2, sticky="e", padx=5)
+tk.Label(fenetre, text="Vitesse initiale (m/s):", bg="white").grid(row=3, column=2, sticky="e", padx=5)
 frame_vitesse2 = tk.Frame(fenetre, bg="white")
-frame_vitesse2.grid(row=2, column=3, padx=5, pady=2, sticky="w")
+frame_vitesse2.grid(row=3, column=3, padx=5, pady=2, sticky="w")
 
 vitesse2_var = tk.StringVar()
 entree_v2 = tk.Entry(frame_vitesse2, textvariable=vitesse2_var, width=8)
@@ -96,6 +228,7 @@ entree_v2.pack(side="left")
 
 label_kmh2 = tk.Label(frame_vitesse2, text="", bg="white", fg="gray", font=("Arial", 9))
 label_kmh2.pack(side="left", padx=3)
+
 
 def update_kmh2(*args):
     try:
@@ -105,31 +238,33 @@ def update_kmh2(*args):
     except ValueError:
         label_kmh2.config(text="")
 
+
 vitesse2_var.trace("w", update_kmh2)
 
-tk.Label(fenetre, text="Position X (-20 à 20):", bg="white").grid(row=3, column=2, sticky="e", padx=5)
+tk.Label(fenetre, text="Position X (-20 à 20):", bg="white").grid(row=4, column=2, sticky="e", padx=5)
 entree_x2 = tk.Entry(fenetre)
-entree_x2.grid(row=3, column=3, padx=5, pady=2)
+entree_x2.grid(row=4, column=3, padx=5, pady=2)
 
-tk.Label(fenetre, text="Position Y (-20 à 20):", bg="white").grid(row=4, column=2, sticky="e", padx=5)
+tk.Label(fenetre, text="Position Y (-20 à 20):", bg="white").grid(row=5, column=2, sticky="e", padx=5)
 entree_y2 = tk.Entry(fenetre)
-entree_y2.grid(row=4, column=3, padx=5, pady=2)
+entree_y2.grid(row=5, column=3, padx=5, pady=2)
 
-tk.Label(fenetre, text="Angle (0° à 360°):", bg="white").grid(row=5, column=2, sticky="e", padx=5)
+tk.Label(fenetre, text="Angle (0° à 360°):", bg="white").grid(row=6, column=2, sticky="e", padx=5)
 entree_a2 = tk.Entry(fenetre)
-entree_a2.grid(row=5, column=3, padx=5, pady=2)
+entree_a2.grid(row=6, column=3, padx=5, pady=2)
 
-tk.Label(fenetre, text="Masse passager 2 (kg):", bg="white").grid(row=6, column=2, sticky="e", padx=5)
+tk.Label(fenetre, text="Masse passager 2 (kg):", bg="white").grid(row=7, column=2, sticky="e", padx=5)
 entree_mp2 = tk.Entry(fenetre)
-entree_mp2.grid(row=6, column=3, padx=5, pady=2)
+entree_mp2.grid(row=7, column=3, padx=5, pady=2)
 
-tk.Label(fenetre, text="Distance d'arrêt (m):", bg="white").grid(row=7, column=2, sticky="e", padx=5)
+tk.Label(fenetre, text="Distance d'arrêt (m):", bg="white").grid(row=8, column=2, sticky="e", padx=5)
 entree_distance2 = tk.Entry(fenetre)
-entree_distance2.grid(row=7, column=3, padx=5, pady=2)
+entree_distance2.grid(row=8, column=3, padx=5, pady=2)
 
 # ==============================CEINTURE 2==============================
 
 ceinture2_var = tk.BooleanVar(value=True)
+
 
 def toggle_ceinture2():
     if ceinture2_var.get():
@@ -139,31 +274,30 @@ def toggle_ceinture2():
         ceinture2_var.set(True)
         btn_ceinture2.config(text="Ceinture P2: OUI", bg="#ccffcc", fg="green")
 
+
 btn_ceinture2 = tk.Button(fenetre, text="Ceinture P2: OUI", command=toggle_ceinture2,
-                           bg="#ccffcc", fg="green", font=("Arial", 10, "bold"),
-                           width=18, relief="raised", bd=2)
-btn_ceinture2.grid(row=8, column=2, columnspan=2, pady=5)
+                          bg="#ccffcc", fg="green", font=("Arial", 10, "bold"),
+                          width=18, relief="raised", bd=2)
+btn_ceinture2.grid(row=9, column=2, columnspan=2, pady=5)
 
 # ==============================GRAPHIQUE==============================
 
 canvas = tk.Canvas(fenetre, width=500, height=300, bg="white", bd=0, relief="flat", highlightthickness=0)
-canvas.grid(row=9, column=0, columnspan=4, padx=10, pady=10)
+canvas.grid(row=10, column=0, columnspan=4, padx=10, pady=10)
 
 # ==============================VARIABLES GLOBALES==============================
 
 animation_id = None
 derniers_resultats = None
-
-# NOUVEAU — Variable pour garder en mémoire la force G la plus haute
 g_max_actuel = 0.0
 
 # ==============================RÉSULTATS==============================
 
 frame_resultats = tk.Frame(fenetre, bg="white")
-frame_resultats.grid(row=10, column=0, columnspan=4, padx=10, pady=5, sticky="ew")
+frame_resultats.grid(row=11, column=0, columnspan=4, padx=10, pady=5, sticky="ew")
 
 label_titre_collision = tk.Label(frame_resultats, text="─── RÉSULTATS DE LA COLLISION ───",
-                                  bg="white", fg="navy", font=("Arial", 10, "bold"))
+                                 bg="white", fg="navy", font=("Arial", 10, "bold"))
 label_titre_collision.grid(row=0, column=0, columnspan=2, pady=(5, 2))
 
 label_collision = tk.Label(frame_resultats, text="\n", bg="white", font=("Arial", 10), justify="left", height=2)
@@ -173,11 +307,10 @@ frame_titre_sev = tk.Frame(frame_resultats, bg="white")
 frame_titre_sev.grid(row=2, column=0, columnspan=2, pady=(10, 2))
 
 label_titre_severite = tk.Label(frame_titre_sev, text="─── SÉVÉRITÉ DE LA COLLISION ───",
-                                  bg="white", fg="navy", font=("Arial", 10, "bold"))
+                                bg="white", fg="navy", font=("Arial", 10, "bold"))
 label_titre_severite.pack(side="left")
 
 
-#la fonction affiche un comparaison pour la force g seulement lorsqu'elle correspond a la valeur affichee
 def afficher_info_g():
     info_win = tk.Toplevel(fenetre)
     info_win.title("Guide des forces G")
@@ -194,8 +327,8 @@ def afficher_info_g():
         info_text = (
             "🟢  MOINS DE 5 G — Aucun risque majeur\n"
             "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
-            "  • 1 g    → Gravité normale sur Terre (debout et immobile)\n"
-            "  • ~2 g   → Un éternuement (environ 2.9 g)\n"
+            "  • 1 g    → Gravité normale sur Terre (debout immobile)\n"
+            "  • ~2 g   → Un éternuement (~2.9 g)\n"
             "  • ~3.5 g → Une toux forte\n"
             "  • 2–3 g  → Montagnes russes standard\n"
             "  • ~4 g   → Freinage d'urgence en voiture\n"
@@ -205,10 +338,10 @@ def afficher_info_g():
             "🟡  5 À 20 G — Blessures mineures possibles\n"
             "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
             "  • ~6 g   → Ouverture d'un parachute\n"
-            "  • ~8 g   → Accélération d'un dragster Top Fuel (une voiture de course)\n"
+            "  • ~8 g   → Accélération d'un dragster Top Fuel\n"
             "  • ~9 g   → Pilote de chasse en virage serré\n"
             "  • ~10 g  → S'asseoir brusquement sur une chaise\n"
-            " Le saviez-vous ? Une personne non entraînée perd conscience vers 4–6 g\n"
+            "  ⚠️  Une personne non entraînée perd conscience vers 4–6 g\n"
         )
     elif g_max_actuel < 40:
         info_text = (
@@ -224,7 +357,7 @@ def afficher_info_g():
             "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
             "  • ~41 g  → Un sauterelle qui saute\n"
             "  • ~51 g  → Impact direct sur une balle de tennis\n"
-            "  • ~60 g  → Accident de NASCAR (voitures de course)\n"
+            "  • ~60 g  → Accident de NASCAR (collision latérale)\n"
         )
     else:
         info_text = (
@@ -235,72 +368,49 @@ def afficher_info_g():
             "  • 215 g  → Accélération d'une flèche tirée à l'arc\n"
         )
 
-    # NOUVEAU — On ajoute la note de fin de texte peu importe le résultat
     if g_max_actuel > 0:
         info_text += (
             "\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
             "ℹ️  NOTE IMPORTANTE\n"
             "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
             "  La durée d'exposition est aussi importante que la valeur !\n"
-            "  Un choc en une fraction d'une seconde de 10 g est supportable, mais 6 g pendant\n"
+            "  Un choc bref de 10 g est supportable, mais 6 g pendant\n"
             "  plusieurs secondes peut être fatal.\n"
             "  Les valeurs dans cette simulation sont des impacts\n"
             "  instantanés (fraction de seconde).\n"
         )
 
-    label_info = tk.Label(
-        info_win,
-        text=info_text,
-        bg="white",
-        fg="black",
-        font=("Courier", 10),
-        justify="left",
-        padx=15,
-        pady=10
-    )
+    label_info = tk.Label(info_win, text=info_text, bg="white", fg="black", font=("Courier", 10), justify="left",
+                          padx=15, pady=10)
     label_info.pack()
 
-    btn_fermer = tk.Button(
-        info_win,
-        text="  Fermer  ",
-        command=info_win.destroy,
-        bg="#eeeeee",
-        font=("Arial", 10),
-        padx=10,
-        pady=5
-    )
+    btn_fermer = tk.Button(info_win, text="  Fermer  ", command=info_win.destroy, bg="#eeeeee", font=("Arial", 10),
+                           padx=10, pady=5)
     btn_fermer.pack(pady=10)
 
-btn_info = tk.Button(
-    frame_titre_sev,
-    text="ℹ",
-    command=afficher_info_g,
-    bg="#d0e8ff",
-    fg="#003366",
-    font=("Arial", 11, "bold"),
-    width=2,
-    relief="ridge",
-    bd=2,
-    cursor="hand2"
-)
+
+btn_info = tk.Button(frame_titre_sev, text="ℹ", command=afficher_info_g, bg="#d0e8ff", fg="#003366",
+                     font=("Arial", 11, "bold"), width=2, relief="ridge", bd=2, cursor="hand2")
 btn_info.pack(side="left", padx=8)
 
-label_severite = tk.Label(frame_resultats, text="\n", bg="white", font=("Arial", 10, "bold"), justify="center", height=2)
+label_severite = tk.Label(frame_resultats, text="\n", bg="white", font=("Arial", 10, "bold"), justify="center",
+                          height=2)
 label_severite.grid(row=3, column=0, columnspan=2, padx=10)
 
-label_titre_passagers = tk.Label(frame_resultats, text="─── IMPACT SUR LES PASSAGERS ───",
-                                   bg="white", fg="darkred", font=("Arial", 10, "bold"))
+label_titre_passagers = tk.Label(frame_resultats, text="─── IMPACT SUR LES PASSAGERS ───", bg="white", fg="darkred",
+                                 font=("Arial", 10, "bold"))
 label_titre_passagers.grid(row=4, column=0, columnspan=2, pady=(10, 2))
 
 label_passagers = tk.Label(frame_resultats, text="\n", bg="white", font=("Arial", 10), justify="left", height=2)
 label_passagers.grid(row=5, column=0, columnspan=2, padx=10)
 
-label_titre_fatal = tk.Label(frame_resultats, text="─── ANALYSE DE FATALITÉ PAR VÉHICULE ───",
-                              bg="white", fg="darkred", font=("Arial", 10, "bold"))
+label_titre_fatal = tk.Label(frame_resultats, text="─── ANALYSE DE FATALITÉ PAR VÉHICULE ───", bg="white", fg="darkred",
+                             font=("Arial", 10, "bold"))
 label_titre_fatal.grid(row=6, column=0, columnspan=2, pady=(10, 2))
 
 label_fatal = tk.Label(frame_resultats, text="\n", bg="white", font=("Arial", 10, "bold"), justify="center", height=2)
 label_fatal.grid(row=7, column=0, columnspan=2, padx=10)
+
 
 # ==============================CONVERSION COORDONNÉES==============================
 
@@ -308,6 +418,7 @@ def to_screen(x, y):
     sx = (x + 22) / 44 * 480 + 10
     sy = 150 - y / 22 * 130
     return sx, sy
+
 
 # ==============================DESSINER LE FOND==============================
 
@@ -321,9 +432,10 @@ def dessiner_fond():
     canvas.create_rectangle(bx1, by1, bx2, by2, outline="black", width=2)
 
     canvas.create_text(to_screen(-20, 0)[0], oy + 12, text="-20", fill="gray", font=("Arial", 7))
-    canvas.create_text(to_screen(20, 0)[0],  oy + 12, text="20",  fill="gray", font=("Arial", 7))
-    canvas.create_text(ox - 14, to_screen(0, 20)[1],  text="20",  fill="gray", font=("Arial", 7))
+    canvas.create_text(to_screen(20, 0)[0], oy + 12, text="20", fill="gray", font=("Arial", 7))
+    canvas.create_text(ox - 14, to_screen(0, 20)[1], text="20", fill="gray", font=("Arial", 7))
     canvas.create_text(ox - 14, to_screen(0, -20)[1], text="-20", fill="gray", font=("Arial", 7))
+
 
 # ==============================SÉVÉRITÉ==============================
 
@@ -345,10 +457,11 @@ def get_severite(g_max):
         couleur = "red"
     return texte, couleur
 
+
 # ==============================AFFICHER RÉSULTATS PASSAGERS==============================
 
 def afficher_passagers(delta_v1, delta_v2, mp1, mp2, d1, d2, m1=1, m2=1, F1_v=0, F2_v=0):
-    global g_max_actuel  # NOUVEAU — Permet de modifier la variable globale
+    global g_max_actuel
 
     F1 = abs(F1_v) * (mp1 / m1)
     F2 = abs(F2_v) * (mp2 / m2)
@@ -365,7 +478,6 @@ def afficher_passagers(delta_v1, delta_v2, mp1, mp2, d1, d2, m1=1, m2=1, F1_v=0,
     g1 = a1 / 9.81
     g2 = a2 / 9.81
 
-    # NOUVEAU — Sauvegarde de la force G la plus haute
     g_max_actuel = max(g1, g2)
 
     texte = (
@@ -384,9 +496,9 @@ def afficher_passagers(delta_v1, delta_v2, mp1, mp2, d1, d2, m1=1, m2=1, F1_v=0,
         if g < 5:
             return "✅ NON FATALE — Aucun risque majeur"
         elif g < 20:
-            return "🟠 NON FATALE — Blessures mineures possibles"
+            return "⚠️ NON FATALE — Blessures mineures possibles"
         elif g < 40:
-            return "⚠️NON FATALE — Blessures modérées probables"
+            return "🟠 NON FATALE — Blessures modérées probables"
         elif g < 80:
             return "🔴 POTENTIELLEMENT FATALE — Blessures graves"
         else:
@@ -415,6 +527,7 @@ def afficher_passagers(delta_v1, delta_v2, mp1, mp2, d1, d2, m1=1, m2=1, F1_v=0,
         couleur_fatal = couleur_diag(g2)
 
     label_fatal.config(text=texte_fatal, fg=couleur_fatal)
+
 
 # ==============================SIMULATION==============================
 
@@ -563,12 +676,12 @@ def lancer_simulation():
         canvas.delete("voiture")
 
         sx1, sy1 = to_screen(pos_x1, pos_y1)
-        canvas.create_oval(sx1 - 12, sy1 - 12, sx1 + 12, sy1 + 12,
-                           fill="lightblue", outline="blue", width=2, tags="voiture")
+        canvas.create_oval(sx1 - 12, sy1 - 12, sx1 + 12, sy1 + 12, fill="lightblue", outline="blue", width=2,
+                           tags="voiture")
 
         sx2, sy2 = to_screen(pos_x2, pos_y2)
-        canvas.create_oval(sx2 - 12, sy2 - 12, sx2 + 12, sy2 + 12,
-                           fill="#ffcccc", outline="red", width=2, tags="voiture")
+        canvas.create_oval(sx2 - 12, sy2 - 12, sx2 + 12, sy2 + 12, fill="#ffcccc", outline="red", width=2,
+                           tags="voiture")
 
         distance = math.sqrt((pos_x1 - pos_x2) ** 2 + (pos_y1 - pos_y2) ** 2)
 
@@ -602,11 +715,9 @@ def lancer_simulation():
                 end_y = pos_y1 + (vfy / vf) * 8
                 pe_x, pe_y = to_screen(end_x, end_y)
                 canvas.create_line(pcx, pcy, pe_x, pe_y, fill="black", width=3, arrow=tk.LAST)
-                canvas.create_text(pe_x, pe_y + 15, text="Vecteur de sortie",
-                                   fill="black", font=("Arial", 8, "italic"))
+                canvas.create_text(pe_x, pe_y + 15, text="Vecteur de sortie", fill="black", font=("Arial", 8, "italic"))
 
-            canvas.create_oval(pcx - 15, pcy - 15, pcx + 15, pcy + 15,
-                               fill="yellow", outline="orange", width=2)
+            canvas.create_oval(pcx - 15, pcy - 15, pcx + 15, pcy + 15, fill="yellow", outline="orange", width=2)
             canvas.create_text(pcx, pcy, text="IMPACT", fill="orange", font=("Arial", 8, "bold"))
 
             label_collision.config(
@@ -630,10 +741,7 @@ def lancer_simulation():
             dehors2 = abs(pos_x2) > 20 or abs(pos_y2) > 20
 
             if dehors1 and dehors2:
-                label_collision.config(
-                    text="Aucune collision — Les deux véhicules ont quitté la zone.",
-                    fg="gray"
-                )
+                label_collision.config(text="Aucune collision — Les deux véhicules ont quitté la zone.", fg="gray")
                 label_passagers.config(text="")
                 label_severite.config(text="")
                 animation_id = None
@@ -641,6 +749,7 @@ def lancer_simulation():
                 animation_id = fenetre.after(50, animer)
 
     animer()
+
 
 # ==============================TOGGLE CEINTURE EN TEMPS RÉEL==============================
 
@@ -650,35 +759,35 @@ def on_toggle1():
         dv1, dv2, mp1, mp2, d1, d2, m1, m2, F1_v, F2_v = derniers_resultats
         afficher_passagers(dv1, dv2, mp1, mp2, d1, d2, m1, m2, F1_v, F2_v)
 
+
 def on_toggle2():
     toggle_ceinture2()
     if derniers_resultats is not None:
         dv1, dv2, mp1, mp2, d1, d2, m1, m2, F1_v, F2_v = derniers_resultats
         afficher_passagers(dv1, dv2, mp1, mp2, d1, d2, m1, m2, F1_v, F2_v)
 
+
 btn_ceinture1.config(command=on_toggle1)
 btn_ceinture2.config(command=on_toggle2)
 
-# ==============================BOUTONS==============================
+# ==============================BOUTONS DE CONTRÔLE==============================
 
-bouton = tk.Button(fenetre, text="Lancer la simulation", command=lancer_simulation,
-                   bg="white", font=("Arial", 11), padx=10, pady=5)
-bouton.grid(row=11, column=0, columnspan=2, pady=10)
+bouton = tk.Button(fenetre, text="Lancer la simulation", command=lancer_simulation, bg="white", font=("Arial", 11),
+                   padx=10, pady=5)
+bouton.grid(row=12, column=0, columnspan=2, pady=10)
+
 
 def reinitialiser():
-    global animation_id, derniers_resultats, g_max_actuel # NOUVEAU — On inclut g_max_actuel
+    global animation_id, derniers_resultats, g_max_actuel
 
     if animation_id is not None:
         fenetre.after_cancel(animation_id)
         animation_id = None
 
     derniers_resultats = None
-    g_max_actuel = 0.0 # NOUVEAU — On remet à zéro
+    g_max_actuel = 0.0
 
-    for entree in [entree_m1, entree_v1, entree_x1, entree_y1, entree_a1, entree_mp1, entree_distance1,
-                   entree_m2, entree_v2, entree_x2, entree_y2, entree_a2, entree_mp2, entree_distance2]:
-        entree.delete(0, tk.END)
-
+    vider_champs()
     label_kmh1.config(text="")
     label_kmh2.config(text="")
 
@@ -693,13 +802,16 @@ def reinitialiser():
     label_passagers.config(text="\n")
     label_fatal.config(text="\n")
 
-bouton_stop = tk.Button(fenetre, text="Réinitialiser", command=reinitialiser,
-                        bg="#ffe6e6", fg="red", font=("Arial", 11), padx=10, pady=5)
-bouton_stop.grid(row=11, column=2, columnspan=4, pady=5)
+
+bouton_stop = tk.Button(fenetre, text="Réinitialiser", command=reinitialiser, bg="#ffe6e6", fg="red",
+                        font=("Arial", 11), padx=10, pady=5)
+bouton_stop.grid(row=12, column=2, columnspan=4, pady=5)
 
 fenetre.update_idletasks()
-w = max(fenetre.winfo_reqwidth(), 800)
-h = max(fenetre.winfo_reqheight(), 900)
+w = max(fenetre.winfo_reqwidth(), 820)
+h = max(fenetre.winfo_reqheight(), 950)
 fenetre.geometry(f"{w}x{h}")
+
+scenario_face_a_face()
 
 fenetre.mainloop()
