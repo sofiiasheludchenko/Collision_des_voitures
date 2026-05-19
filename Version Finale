@@ -119,7 +119,7 @@ def scenario_custom():
 
 # ==============================BARRE DE SÉLECTION DE SCÉNARIOS==============================
 
-frame_scenarios = tk.LabelFrame(fenetre, text=" CHOISIR UN SCÉNARIO CONFIGURÉ ", bg="white", fg="navy",
+frame_scenarios = tk.LabelFrame(fenetre, text=" CHOISIR UN SCÉNARIO ", bg="white", fg="navy",
                                 font=("Arial", 10, "bold"))
 frame_scenarios.grid(row=0, column=0, columnspan=4, padx=10, pady=10, sticky="ew")
 
